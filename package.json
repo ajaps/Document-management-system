@@ -1,0 +1,25 @@
+{
+  "name": "document-management-system",
+  "version": "1.0.0",
+  "description": "An API for document management system, complete with roles and privileges",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/framky007/Document-management-system.git"
+  },
+  "author": "Ajaps Franklin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/framky007/Document-management-system/issues"
+  },
+  "homepage": "https://github.com/framky007/Document-management-system#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "babel-eslint": "^7.2.3",
+    "eslint": "^4.2.0",
+    "eslint-config-airbnb": "^15.0.2"
+  }
+}
