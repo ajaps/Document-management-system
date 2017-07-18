@@ -1,0 +1,19 @@
+{
+  "name": "document-management-system",
+  "version": "1.0.0",
+  "description": "An API for document management system, complete with roles and privileges",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/framky007/Document-management-system.git"
+  },
+  "author": "Ajaps Franklin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/framky007/Document-management-system/issues"
+  },
+  "homepage": "https://github.com/framky007/Document-management-system#readme"
+}
