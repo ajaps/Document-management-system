@@ -5,20 +5,16 @@ module.exports = {
       id: {
         allowNull: false,
         autoIncrement: true,
-        primaryKey: true,
         type: Sequelize.INTEGER
       },
       email: {
+        allowNull: false,
+        primaryKey: true,
         type: Sequelize.STRING
       },
-      role: {
+      password: {
+        allowNull: false,
         type: Sequelize.STRING
-      },
-      created_at: {
-        type: Sequelize.DATE
-      },
-      updated_at: {
-        type: Sequelize.DATE
       },
       createdAt: {
         allowNull: false,
