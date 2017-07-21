@@ -68,7 +68,6 @@ const loginUser = (request, response, next) => {
   });
 };
 
-
 module.exports = {
   addUser,
   loginUser,
