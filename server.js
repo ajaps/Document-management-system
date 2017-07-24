@@ -1,15 +1,25 @@
-import restify from 'restify';
-import restifyValidator from 'restify-validator';
-import { addUser, loginUser } from './server/routes/user';
+import bodyParser from 'body-parser';
+import express from 'express';
+import expressValidator from 'express-validator';
+import { addUser, loginUser, allUser } from './server/routes/user';
+import authentication from './server/middleware/authentication';
 
-const server = restify.createServer();
+const server = express();
+server.use(bodyParser.urlencoded({ extended: false }));
+server.use(bodyParser.json());
+server.use(expressValidator());
 
-server.use(restify.bodyParser());
-server.use(restify.queryParser());
-server.use(restifyValidator);
+const apiRoutes = express.Router();
+server.use('/api/v1', apiRoutes);
 
-server.post('/api/v1/user', addUser);
-server.get('/api/v1/user/login', loginUser);
+apiRoutes.all('/', (req, res) => {
+  res.status(200).json({ message: 'Welcome to Document Management System API' });
+});
+
+apiRoutes
+.post('/users', addUser)
+.get('/users', authentication.verifyToken, allUser)
+.post('/users/login', loginUser);
 
 server.listen(3004, () => {
 });
