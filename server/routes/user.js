@@ -24,7 +24,7 @@ const addUser = (request, response, next) => {
     response.send(201, data);
     next();
   })
-  .catch((error) => {
+  .catch(() => {
     const data = {
       message: 'Email Address already exist in the database',
       token: null,
@@ -33,6 +33,42 @@ const addUser = (request, response, next) => {
   });
 };
 
+
+const loginUser = (request, response, next) => {
+  const verifiedParams = helper.verifyUserParams(request);
+  if (verifiedParams.error) {
+    response.send(400, { message: verifiedParams.message });
+    return;
+  }
+
+  let validUser = false;
+  models.User.find({
+    where: {
+      email: request.params.email,
+    }
+  }).then((user) => {
+    let data;
+    validUser = bcrypt.compareSync(request.params.password, user.password);
+    if (validUser) {
+      const userToken = helper.setUserToken(user.email);
+      data = {
+        message: 'Logged in successful',
+        token: userToken
+      };
+      response.send(202, data);
+      next();
+    } else {
+      data = {
+        message: 'Invalid username or password',
+        token: null,
+      };
+      response.send(401, data);
+      next();
+    }
+  });
+};
+
 module.exports = {
   addUser,
+  loginUser,
 };
