@@ -6,6 +6,15 @@ const verifyUserParams = (request) => {
   return request.getValidationResult();
 };
 
+
+const verifyDocumentParams = (request) => {
+  request.assert('title', 'title field is required').notEmpty();
+  request.assert('title', '10 to 20 characters required').len(10, 30);
+  request.assert('content', 'Document content cannot be empty').notEmpty();
+  return request.getValidationResult();
+};
+
 module.exports = {
   verifyUserParams,
+  verifyDocumentParams,
 };
