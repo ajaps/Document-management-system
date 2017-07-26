@@ -1,7 +1,8 @@
 import bodyParser from 'body-parser';
 import express from 'express';
 import expressValidator from 'express-validator';
-import { createUser, loginUser, allUser, findUser } from './server/routes/user';
+import { createUser, loginUser, allUser, findUser,
+updateUser } from './server/routes/user';
 import { createDocument } from './server/routes/documents';
 import authentication from './server/middleware/authentication';
 
@@ -23,7 +24,8 @@ apiRoutes
 .post('/users', createUser)
 .get('/users', authentication.verifyToken, allUser)
 .get('/users/:id', authentication.verifyToken, findUser)
-.post('/users/login', loginUser);
+.post('/users/login', loginUser)
+.put('/users/:id', authentication.verifyToken, authentication.validateAdmin, updateUser);
 
 apiRoutes
 .post('/documents', authentication.verifyToken, createDocument);

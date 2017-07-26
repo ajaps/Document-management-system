@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
+import models from '../models/index';
 
 dotenv.config();
 const SECRET_KEY = process.env.SECRET;
@@ -30,7 +31,33 @@ const verifyToken = (request, response, next) => {
   }
 };
 
+const validateAdmin = (request, response, next) => {
+  models.Role.findOne({
+    where:
+    { roleName:
+      { $iLike: 'admin' }
+    }
+  })
+  .then((result) => {
+    if (!(request.decoded.data.roleId === result.id)) {
+      response.status(401).json({
+        message: 'Oops! You need admin priviledges to perform this action!!',
+      });
+    } else {
+      next();
+    }
+  })
+  .catch(() => {
+    response.status(400).json({
+      message: `Sorry, Admin priviledges is required to perform this operation
+       No Administrator was found in the database`,
+    });
+  });
+};
+
+
 module.exports = {
   verifyToken,
   setUserToken,
+  validateAdmin,
 };
