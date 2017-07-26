@@ -15,7 +15,6 @@ const createDocument = (request, response) => {
       content: request.body.content,
       access: request.body.access,
       userId: request.decoded.data.userId,
-      roleId: request.decoded.data.roleId,
     })
     .then((user) => {
       response.status(201).json({
