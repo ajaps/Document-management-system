@@ -5,13 +5,13 @@ import authentication from '../middleware/authentication';
 
 const saltRounds = 10;
 
-const addUser = (request, response) => {
+const createUser = (request, response) => {
   helper.verifyUserParams(request)
   .then((result) => {
     const verifiedParams = result.mapped();
     const noErrors = result.isEmpty();
     if (!noErrors) {
-      response.status(400).json({ message: verifiedParams });
+      response.status(412).json({ message: verifiedParams });
       return;
     }
     const password = request.query.password;
@@ -22,7 +22,7 @@ const addUser = (request, response) => {
       password: hashPassword,
     })
     .then((user) => {
-      const userToken = authentication.setUserToken(user.email);
+      const userToken = authentication.setUserToken(user);
       const data = {
         message: 'New user created successfully',
         token: userToken,
@@ -46,7 +46,7 @@ const loginUser = (request, response) => {
     const verifiedParams = result.mapped();
     const noErrors = result.isEmpty();
     if (!noErrors) {
-      response.status(400).json({ message: verifiedParams });
+      response.status(412).json({ message: verifiedParams });
       return;
     }
     const plainTextpassword = request.query.password;
@@ -59,7 +59,12 @@ const loginUser = (request, response) => {
     }).then((user) => {
       validUser = bcrypt.compareSync(plainTextpassword, user.password);
       if (validUser) {
-        const userToken = authentication.setUserToken(user.email);
+        const userInfo = {
+          userId: user.id,
+          roleId: user.roleId,
+          email: user.email,
+        };
+        const userToken = authentication.setUserToken(userInfo);
         response.status(202).json(
           { message: 'Logged in successful',
             token: userToken });
@@ -91,7 +96,7 @@ const allUser = (request, response) => {
 
 
 module.exports = {
-  addUser,
+  createUser,
   loginUser,
   allUser,
 };

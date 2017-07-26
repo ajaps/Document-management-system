@@ -1,7 +1,8 @@
 import bodyParser from 'body-parser';
 import express from 'express';
 import expressValidator from 'express-validator';
-import { addUser, loginUser, allUser } from './server/routes/user';
+import { createUser, loginUser, allUser } from './server/routes/user';
+import { createDocument } from './server/routes/documents';
 import authentication from './server/middleware/authentication';
 
 const server = express();
@@ -17,9 +18,13 @@ apiRoutes.all('/', (req, res) => {
 });
 
 apiRoutes
-.post('/users', addUser)
+.post('/users', createUser)
 .get('/users', authentication.verifyToken, allUser)
 .post('/users/login', loginUser);
+
+apiRoutes
+.post('/documents', authentication.verifyToken, createDocument);
+
 
 server.listen(3004, () => {
 });
