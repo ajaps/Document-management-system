@@ -115,10 +115,32 @@ const findUser = (request, response) => {
   }
 };
 
+const updateUser = (request, response) => {
+  models.User.update(request.body, {
+    where: {
+      id: request.params.id
+    },
+    returning: true,
+    plain: true,
+  })
+  .then((user) => {
+    response.status(200).json({
+      message: 'User updated successfully',
+      user });
+  })
+  .catch((error) => {
+    response.status(409).json({
+      message: 'An error occured while updating user',
+      error,
+    });
+  });
+};
+
 
 module.exports = {
   createUser,
   loginUser,
   allUser,
   findUser,
+  updateUser,
 };
