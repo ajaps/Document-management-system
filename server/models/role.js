@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
   const Role = sequelize.define('Role', {
-    roleId: {
+    id: {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
     roleName: {
       allowNull: false,
       type: DataTypes.STRING,
+      unique: true,
     }
   });
   Role.associate = (models) => {

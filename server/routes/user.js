@@ -14,8 +14,8 @@ const createUser = (request, response) => {
       response.status(412).json({ message: verifiedParams });
       return;
     }
-    const password = request.query.password;
-    const email = request.query.email;
+    const password = request.body.password || request.query.password;
+    const email = request.body.email || request.query.email;
     const hashPassword = bcrypt.hashSync(password, saltRounds);
     models.User.create({
       email,
@@ -49,8 +49,8 @@ const loginUser = (request, response) => {
       response.status(412).json({ message: verifiedParams });
       return;
     }
-    const plainTextpassword = request.query.password;
-    const email = request.query.email;
+    const plainTextpassword = request.body.password || request.query.password;
+    const email = request.body.email || request.query.email;
     let validUser = false;
     models.User.find({
       where: {
@@ -84,7 +84,7 @@ const loginUser = (request, response) => {
 
 
 const allUser = (request, response) => {
-  models.User.findAll({
+  models.User.findAll({ attributes: ['id', 'email', 'roleId']
   }).then((user) => {
     response.status(200).json(user);
   })
@@ -95,8 +95,30 @@ const allUser = (request, response) => {
 };
 
 
+const findUser = (request, response) => {
+  const userId = request.params.id;
+  if (request.params.id) {
+    models.User.findById(userId)
+    .then((user) => {
+      const result = { userID: user.id,
+        userRole: user.roleId,
+        email: user.email
+      };
+      response.status(200).json({ result });
+    })
+    .catch((error) => {
+      response.status(404).json({
+        message: `cannot find user with ID: ${userId}`,
+        error,
+      });
+    });
+  }
+};
+
+
 module.exports = {
   createUser,
   loginUser,
   allUser,
+  findUser,
 };
