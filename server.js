@@ -3,8 +3,8 @@ import express from 'express';
 import expressValidator from 'express-validator';
 import { createUser, loginUser, allUser, findUser,
 updateUser, deleteUser } from './server/routes/user';
-import { createDocument, getAllDocument, updateDocument
- } from './server/routes/documents';
+import { createDocument, getAllDocument, updateDocument,
+ getDocumentByUserId } from './server/routes/documents';
 import authentication from './server/middleware/authentication';
 
 const server = express();
@@ -32,7 +32,8 @@ apiRoutes
 apiRoutes
 .post('/documents', authentication.verifyToken, createDocument)
 .get('/documents', authentication.verifyToken, getAllDocument)
-.put('/documents/:id', authentication.verifyToken, updateDocument);
+.put('/documents/:id', authentication.verifyToken, updateDocument)
+.get('/users/:id/documents', authentication.verifyToken, getDocumentByUserId);
 
 server.listen(3004, () => {
 });
