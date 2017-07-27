@@ -33,6 +33,39 @@ const createDocument = (request, response) => {
 };
 
 
+const getAllDocument = (request, response) => {
+  const isAdmin = RegExp('admin', 'gi').test(request.decoded.data.roleType);
+  let query;
+  if (isAdmin) {
+    query = { order: [['createdAt', 'DESC']],
+    };
+  } else {
+    query = { order: [['createdAt', 'DESC']],
+      where: {
+        $or: [
+          { userId: request.decoded.data.userId },
+          { access: 'public' }
+        ]
+      }
+    };
+  }
+  models.Document.findAndCountAll(query)
+  .then((document) => {
+    response.status(200).json({
+      documentCount: document.count,
+      message: 'successful',
+      document: document.rows,
+    });
+  })
+  .catch((error) => {
+    response.status(400).json({
+      message: 'An error occured retrieving documents',
+      data: error,
+    });
+  });
+};
+
 module.exports = {
   createDocument,
+  getAllDocument,
 };
