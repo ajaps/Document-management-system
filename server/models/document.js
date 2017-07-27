@@ -22,18 +22,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       type: DataTypes.INTEGER,
     },
-    roleId: {
-      defaultValue: 2,
-      isNumeric: true,
-      type: DataTypes.INTEGER,
-    }
   });
   Document.associate = (models) => {
     Document.belongsTo(models.User, {
       foreignKey: 'userId',
-    });
-    Document.belongsTo(models.Role, {
-      foreignKey: 'roleId',
     });
   };
   return Document;
