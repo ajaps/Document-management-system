@@ -86,9 +86,13 @@ const loginUser = (request, response) => {
 
 
 const allUser = (request, response) => {
-  models.User.findAll({ attributes: ['id', 'email', 'roleId']
+  const paginate = helper.paginate(request);
+  models.User.findAndCountAll({ attributes: ['id', 'email', 'roleId'],
+    order: [['roleId', 'ASC']],
+    offset: paginate[0],
+    limit: paginate[1],
   }).then((user) => {
-    response.status(200).json(user);
+    response.status(200).json({ Total_Users: user.count, users: user.rows });
   })
   .catch(() => {
     response.status(404).json(
@@ -113,6 +117,11 @@ const findUser = (request, response) => {
         message: `cannot find user with ID: ${userId}`,
         error,
       });
+    });
+  } else {
+    response.status(404).json({
+      message: 'Validation error!!  No id was passed',
+      error: true
     });
   }
 };
