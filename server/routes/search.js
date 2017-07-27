@@ -16,6 +16,37 @@ const searchUser = (request, response) => {
 };
 
 
+const searchDocument = (request, response) => {
+  const searchTerm = request.query.q;
+  const isAdmin = RegExp('admin', 'gi').test(request.decoded.data.roleType);
+  let query;
+  if (isAdmin) {
+    query = { order: [['createdAt', 'DESC']] };
+  } else {
+    query = { order: [['createdAt', 'DESC']],
+      where: {
+        $or: [
+          { userId: request.decoded.data.userId },
+          { access: 'public' }
+        ]
+      }
+    };
+  }
+  models.Document.findAll(query)
+  .then((documents) => {
+    const filteredDocs = documents.filter(document =>
+    RegExp(searchTerm, 'gi').test(document.title));
+    response.status(200).json({ Documents: filteredDocs });
+  })
+  .catch((error) => {
+    response.status(400).json({
+      message: 'An error occured retrieving documents',
+      data: error,
+    });
+  });
+};
+
 module.exports = {
   searchUser,
+  searchDocument,
 };
