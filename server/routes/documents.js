@@ -106,40 +106,8 @@ const updateDocument = (request, response) => {
   });
 };
 
-const deleteDocument = (request, response) => {
-  const documentId = request.params.id;
-  const isAdmin = RegExp('admin', 'gi').test(request.decoded.data.roleType);
-  let query;
-  if (isAdmin) {
-    query = { where: { id: documentId } };
-  } else {
-    query = { where: { id: documentId, userId: request.decoded.data.userId } };
-  }
-  models.Document.destroy(query)
-  .then((document) => {
-    if (!document.length === 0) {
-      response.status(200).json({
-        message: 'successful',
-        document
-      });
-    } else {
-      response.status(401).json({
-        message: 'You do not have access to view/delete the available documents',
-        document
-      });
-    }
-  })
-  .catch((error) => {
-    response.status(400).json({
-      message: 'An error occured! Document could not be deleted',
-      error,
-    });
-  });
-};
-
 module.exports = {
   createDocument,
   getAllDocument,
   updateDocument,
-  deleteDocument,
 };
