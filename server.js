@@ -3,7 +3,7 @@ import express from 'express';
 import expressValidator from 'express-validator';
 import { createUser, loginUser, allUser, findUser,
 updateUser, deleteUser } from './server/routes/user';
-import { createDocument } from './server/routes/documents';
+import { createDocument, getAllDocument } from './server/routes/documents';
 import authentication from './server/middleware/authentication';
 
 const server = express();
@@ -29,7 +29,8 @@ apiRoutes
 .delete('/users/:id', authentication.verifyToken, deleteUser);
 
 apiRoutes
-.post('/documents', authentication.verifyToken, createDocument);
+.post('/documents', authentication.verifyToken, createDocument)
+.get('/documents', authentication.verifyToken, getAllDocument);
 
 server.listen(3004, () => {
 });
