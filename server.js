@@ -2,7 +2,7 @@ import bodyParser from 'body-parser';
 import express from 'express';
 import expressValidator from 'express-validator';
 import { createUser, loginUser, allUser, findUser,
-updateUser } from './server/routes/user';
+updateUser, deleteUser } from './server/routes/user';
 import { createDocument } from './server/routes/documents';
 import authentication from './server/middleware/authentication';
 
@@ -25,11 +25,11 @@ apiRoutes
 .get('/users', authentication.verifyToken, allUser)
 .get('/users/:id', authentication.verifyToken, findUser)
 .post('/users/login', loginUser)
-.put('/users/:id', authentication.verifyToken, authentication.validateAdmin, updateUser);
+.put('/users/:id', authentication.verifyToken, updateUser)
+.delete('/users/:id', authentication.verifyToken, deleteUser);
 
 apiRoutes
 .post('/documents', authentication.verifyToken, createDocument);
-
 
 server.listen(3004, () => {
 });

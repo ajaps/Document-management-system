@@ -24,6 +24,7 @@ module.exports = (sequelize, DataTypes) => {
     User.hasMany(models.Document, {
       foreignKey: 'userId',
       onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
       as: 'documents',
     });
   };

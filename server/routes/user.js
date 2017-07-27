@@ -34,7 +34,7 @@ const createUser = (request, response) => {
         message: `${email} already exist in the database`,
         token: null,
       };
-      response.status(406).json(data);
+      response.status(409).json(data);
     });
   });
 };
@@ -55,14 +55,16 @@ const loginUser = (request, response) => {
     models.User.find({
       where: {
         email,
-      }
+      },
+      include: [{ model: models.Role }],
     }).then((user) => {
       validUser = bcrypt.compareSync(plainTextpassword, user.password);
       if (validUser) {
         const userInfo = {
           userId: user.id,
-          roleId: user.roleId,
+          roleType: user.Role.roleName,
           email: user.email,
+          roleId: user.roleId,
         };
         const userToken = authentication.setUserToken(userInfo);
         response.status(202).json(
@@ -116,6 +118,18 @@ const findUser = (request, response) => {
 };
 
 const updateUser = (request, response) => {
+  const userId = request.params.id;
+  const isAdmin = RegExp('admin', 'gi').test(request.decoded.data.roleType);
+  if (!isAdmin && (request.body.roleId !== undefined)) {
+    return response.status(401).json({
+      message: "Ooops!! Only an Admin can update users' role",
+      error: 401 });
+  }
+  if (!isAdmin && userId !== request.decoded.data.userId) {
+    return response.status(401).json({
+      message: "Only an Admin can update another user's attributes",
+      error: 401 });
+  }
   models.User.update(request.body, {
     where: {
       id: request.params.id
@@ -126,11 +140,43 @@ const updateUser = (request, response) => {
   .then((user) => {
     response.status(200).json({
       message: 'User updated successfully',
-      user });
+      result: user[1].dataValues });
   })
   .catch((error) => {
     response.status(409).json({
-      message: 'An error occured while updating user',
+      message: 'Could not updating user details, verify the ID is valid',
+      error,
+    });
+  });
+};
+
+const deleteUser = (request, response) => {
+  const deleteUserId = request.params.id;
+  const isAdmin = RegExp('admin', 'gi').test(request.decoded.data.roleType);
+  let query;
+  if (isAdmin || Number(deleteUserId) === request.decoded.data.userId) {
+    query = { where: { id: deleteUserId } };
+  } else {
+    return response.status(200).json({
+      message: `You need Admin priviledges to delete another user's
+        account other than yours,`,
+      error: true });
+  }
+  models.User.destroy(query)
+  .then((user) => {
+    if (user === 0) {
+      response.status(404).json({
+        message: 'User ID does not exist',
+        user });
+    } else {
+      response.status(200).json({
+        message: 'User deleted successfully',
+        user });
+    }
+  })
+  .catch((error) => {
+    response.status(409).json({
+      message: 'An error occured! User could not be deleted',
       error,
     });
   });
@@ -143,4 +189,5 @@ module.exports = {
   allUser,
   findUser,
   updateUser,
+  deleteUser,
 };

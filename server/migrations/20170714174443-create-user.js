@@ -6,7 +6,7 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       email: {
         type: Sequelize.STRING,
@@ -17,12 +17,12 @@ module.exports = {
       },
       roleId: {
         type: Sequelize.INTEGER,
-        onDelete: 'CASCADE',
         references: {
           model: 'Roles',
           key: 'id',
           as: 'roleId',
-        }
+        },
+        onUpdate: 'cascade',
       },
       createdAt: {
         allowNull: false,

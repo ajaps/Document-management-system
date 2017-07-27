@@ -16,10 +16,10 @@ const createDocument = (request, response) => {
       access: request.body.access,
       userId: request.decoded.data.userId,
     })
-    .then((user) => {
+    .then((document) => {
       response.status(201).json({
         message: 'New Document created successfully',
-        title: user.title,
+        title: document.title,
         ownerId: request.decoded.data.userId,
       });
     })
@@ -31,6 +31,7 @@ const createDocument = (request, response) => {
     });
   });
 };
+
 
 module.exports = {
   createDocument,
