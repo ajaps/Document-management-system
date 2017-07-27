@@ -34,13 +34,18 @@ const createDocument = (request, response) => {
 
 
 const getAllDocument = (request, response) => {
+  const paginate = helper.paginate(request);
   const isAdmin = RegExp('admin', 'gi').test(request.decoded.data.roleType);
   let query;
   if (isAdmin) {
     query = { order: [['createdAt', 'DESC']],
+      offset: paginate[0],
+      limit: paginate[1],
     };
   } else {
     query = { order: [['createdAt', 'DESC']],
+      offset: paginate[0],
+      limit: paginate[1],
       where: {
         $or: [
           { userId: request.decoded.data.userId },
@@ -65,7 +70,44 @@ const getAllDocument = (request, response) => {
   });
 };
 
+
+
+const updateDocument = (request, response) => {
+  const documentId = request.params.id;
+  const isAdmin = RegExp('admin', 'gi').test(request.decoded.data.roleType);
+  let query;
+  if (isAdmin) {
+    query = { where: { id: documentId }, returning: true, plain: true, };
+  } else {
+    query = { where: { id: documentId, userId: request.decoded.data.userId },
+      returning: true,
+      plain: true, };
+  }
+  models.Document.update(request.body, query)
+  .then((document) => {
+    if (!document.length === 0) {
+      response.status(200).json({
+        message: 'successful',
+        document
+      });
+    } else {
+      response.status(401).json({
+        message: 'You do not have access to view/update the available documents',
+        document
+      });
+    }
+  })
+  .catch((error) => {
+    response.status(400).json({
+      message: `An error occured updating document, confirm you
+      have access right to update this document.`,
+      error,
+    });
+  });
+};
+
 module.exports = {
   createDocument,
   getAllDocument,
+  updateDocument,
 };
