@@ -137,9 +137,42 @@ const deleteDocument = (request, response) => {
   });
 };
 
+const getDocumentByUserId = (request, response) => {
+  const userId = request.params.id;
+  const isAdmin = RegExp('admin', 'gi').test(request.decoded.data.roleType);
+  let query;
+  if (isAdmin) {
+    query = { where: { userId } };
+  } else {
+    query = { where: { userId, access: 'public' } };
+  }
+  models.Document.findAll(query)
+  .then((document) => {
+    if (!document.length === 0) {
+      response.status(200).json({
+        message: 'successful',
+        document
+      });
+    } else {
+      response.status(401).json({
+        message: 'You do not have access to view the available documents',
+        document
+      });
+    }
+  })
+  .catch((error) => {
+    response.status(400).json({
+      message: 'An error occured! Document could not be deleted',
+      error,
+    });
+  });
+};
+
+
 module.exports = {
   createDocument,
   getAllDocument,
   updateDocument,
   deleteDocument,
+  getDocumentByUserId,
 };
