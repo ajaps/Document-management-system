@@ -34,13 +34,18 @@ const createDocument = (request, response) => {
 
 
 const getAllDocument = (request, response) => {
+  const paginate = helper.paginate(request);
   const isAdmin = RegExp('admin', 'gi').test(request.decoded.data.roleType);
   let query;
   if (isAdmin) {
     query = { order: [['createdAt', 'DESC']],
+      offset: paginate[0],
+      limit: paginate[1],
     };
   } else {
     query = { order: [['createdAt', 'DESC']],
+      offset: paginate[0],
+      limit: paginate[1],
       where: {
         $or: [
           { userId: request.decoded.data.userId },
