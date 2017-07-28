@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import Sequelize from 'sequelize';
 
-import configuration from '../config/config';
+import configuration from '../../server/config/config.json';
 
 require('dotenv').config();
 
