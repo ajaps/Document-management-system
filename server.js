@@ -42,7 +42,7 @@ apiRoutes
 .get('/search/documents', authentication.verifyToken, searchDocument);
 
 
-server.listen(3004, () => {
+server.listen(process.env.PORT || 3004, () => {
 });
 
 module.exports = server;
