@@ -2,11 +2,11 @@ import bodyParser from 'body-parser';
 import express from 'express';
 import expressValidator from 'express-validator';
 import { createUser, loginUser, allUser, findUser,
-updateUser, deleteUser } from './server/controllers/user';
+updateUser, deleteUser } from './controllers/user';
 import { createDocument, getAllDocument, updateDocument,
- getDocumentByUserId } from './server/controllers/documents';
-import authentication from './server/middleware/authentication';
-import { searchUser, searchDocument } from './server/controllers/search';
+ getDocumentByUserId } from './controllers/documents';
+import authentication from './middleware/authentication';
+import { searchUser, searchDocument } from './controllers/search';
 
 const server = express();
 server.use(bodyParser.urlencoded({ extended: false }));
@@ -42,7 +42,7 @@ apiRoutes
 .get('/search/documents', authentication.verifyToken, searchDocument);
 
 
-server.listen(3004, () => {
+server.listen(process.env.PORT || 3004, () => {
 });
 
 module.exports = server;
