@@ -6,7 +6,7 @@ updateUser, deleteUser } from './server/routes/user';
 import { createDocument, getAllDocument, updateDocument,
  getDocumentByUserId } from './server/routes/documents';
 import authentication from './server/middleware/authentication';
-import { searchUser } from './server/routes/search';
+import { searchUser, searchDocument } from './server/routes/search';
 
 const server = express();
 server.use(bodyParser.urlencoded({ extended: false }));
@@ -38,7 +38,8 @@ apiRoutes
 
 
 apiRoutes
-.get('/search/users', authentication.verifyToken, searchUser);
+.get('/search/users', authentication.verifyToken, searchUser)
+.get('/search/documents', authentication.verifyToken, searchDocument);
 
 
 server.listen(3004, () => {
