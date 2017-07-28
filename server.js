@@ -2,11 +2,11 @@ import bodyParser from 'body-parser';
 import express from 'express';
 import expressValidator from 'express-validator';
 import { createUser, loginUser, allUser, findUser,
-updateUser, deleteUser } from './server/routes/user';
+updateUser, deleteUser } from './server/controllers/user';
 import { createDocument, getAllDocument, updateDocument,
- getDocumentByUserId } from './server/routes/documents';
+ getDocumentByUserId } from './server/controllers/documents';
 import authentication from './server/middleware/authentication';
-import { searchUser, searchDocument } from './server/routes/search';
+import { searchUser, searchDocument } from './server/controllers/search';
 
 const server = express();
 server.use(bodyParser.urlencoded({ extended: false }));
