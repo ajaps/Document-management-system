@@ -6,7 +6,7 @@ module.exports = {
     password: process.env.DEV_PASSW,
     database: process.env.DEV_DATABASE,
     host: process.env.HOST,
-    dialect: 'postgres',
+    dialect: process.env.DIALECT,
   },
   test: {
     username: 'root',
@@ -17,6 +17,6 @@ module.exports = {
   },
   production: {
     use_env_variable: process.env.DATABASE_URL,
-    dialect: 'postgres'
+    dialect: process.env.DIALECT
   }
 };
