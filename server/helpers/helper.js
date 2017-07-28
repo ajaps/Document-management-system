@@ -28,8 +28,67 @@ const paginate = (request) => {
 };
 
 
+const queryForAllDocuments = (request) => {
+  const getPaginate = paginate(request);
+  const isAdmin = RegExp('admin', 'gi').test(request.decoded.data.roleType);
+  if (isAdmin) {
+    return { order: [['createdAt', 'DESC']],
+      offset: getPaginate[0],
+      limit: getPaginate[1],
+    };
+  }
+  return { order: [['createdAt', 'DESC']],
+    offset: getPaginate[0],
+    limit: getPaginate[1],
+    where: {
+      $or: [
+        { userId: request.decoded.data.userId },
+        { access: 'public' }
+      ]
+    }
+  };
+};
+
+const queryUpdateDeleteDoc = (request) => {
+  const documentId = request.params.id;
+  const isAdmin = RegExp('admin', 'gi').test(request.decoded.data.roleType);
+  if (isAdmin) {
+    return { where: { id: documentId } };
+  }
+  return {
+    where: { id: documentId, userId: request.decoded.data.userId } };
+};
+
+const queryFindDocById = (request) => {
+  const userId = request.params.id;
+  const isAdmin = RegExp('admin', 'gi').test(request.decoded.data.roleType);
+  if (isAdmin) {
+    return { where: { userId } };
+  }
+  return { where: { userId, access: 'public' } };
+};
+
+const querySearchDocuments = (request) => {
+  const isAdmin = RegExp('admin', 'gi').test(request.decoded.data.roleType);
+  if (isAdmin) {
+    return { order: [['createdAt', 'DESC']] };
+  }
+  return { order: [['createdAt', 'DESC']],
+    where: {
+      $or: [
+        { userId: request.decoded.data.userId },
+        { access: 'public' }
+      ]
+    }
+  };
+};
+
 module.exports = {
   verifyUserParams,
   verifyDocumentParams,
   paginate,
+  queryForAllDocuments,
+  queryUpdateDeleteDoc,
+  queryFindDocById,
+  querySearchDocuments,
 };

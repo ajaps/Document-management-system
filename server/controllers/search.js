@@ -1,8 +1,10 @@
 import models from '../models/index';
+import helper from '../helpers/helper';
 
 const searchUser = (request, response) => {
   const searchTerm = request.query.q;
   models.User.findAll({ attributes: ['id', 'email', 'roleId'],
+    email: { $like: searchTerm },
     order: [['roleId', 'ASC']],
   }).then((users) => {
     const filteredUsers = users.filter(user =>
@@ -17,21 +19,8 @@ const searchUser = (request, response) => {
 
 
 const searchDocument = (request, response) => {
+  const query = helper.querySearchDocuments(request);
   const searchTerm = request.query.q;
-  const isAdmin = RegExp('admin', 'gi').test(request.decoded.data.roleType);
-  let query;
-  if (isAdmin) {
-    query = { order: [['createdAt', 'DESC']] };
-  } else {
-    query = { order: [['createdAt', 'DESC']],
-      where: {
-        $or: [
-          { userId: request.decoded.data.userId },
-          { access: 'public' }
-        ]
-      }
-    };
-  }
   models.Document.findAll(query)
   .then((documents) => {
     const filteredDocs = documents.filter(document =>
@@ -41,7 +30,7 @@ const searchDocument = (request, response) => {
   .catch((error) => {
     response.status(400).json({
       message: 'An error occured retrieving documents',
-      data: error,
+      error,
     });
   });
 };

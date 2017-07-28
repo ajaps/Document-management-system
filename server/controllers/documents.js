@@ -34,32 +34,13 @@ const createDocument = (request, response) => {
 
 
 const getAllDocument = (request, response) => {
-  const paginate = helper.paginate(request);
-  const isAdmin = RegExp('admin', 'gi').test(request.decoded.data.roleType);
-  let query;
-  if (isAdmin) {
-    query = { order: [['createdAt', 'DESC']],
-      offset: paginate[0],
-      limit: paginate[1],
-    };
-  } else {
-    query = { order: [['createdAt', 'DESC']],
-      offset: paginate[0],
-      limit: paginate[1],
-      where: {
-        $or: [
-          { userId: request.decoded.data.userId },
-          { access: 'public' }
-        ]
-      }
-    };
-  }
+  const query = helper.queryForAllDocuments(request);
   models.Document.findAndCountAll(query)
-  .then((document) => {
+  .then((documents) => {
     response.status(200).json({
-      documentCount: document.count,
+      documentCount: documents.count,
       message: 'successful',
-      document: document.rows,
+      document: documents.rows,
     });
   })
   .catch((error) => {
@@ -71,18 +52,8 @@ const getAllDocument = (request, response) => {
 };
 
 
-
 const updateDocument = (request, response) => {
-  const documentId = request.params.id;
-  const isAdmin = RegExp('admin', 'gi').test(request.decoded.data.roleType);
-  let query;
-  if (isAdmin) {
-    query = { where: { id: documentId }, returning: true, plain: true, };
-  } else {
-    query = { where: { id: documentId, userId: request.decoded.data.userId },
-      returning: true,
-      plain: true, };
-  }
+  const query = helper.queryUpdateDeleteDoc(request);
   models.Document.update(request.body, query)
   .then((document) => {
     if (!document.length === 0) {
@@ -92,7 +63,7 @@ const updateDocument = (request, response) => {
       });
     } else {
       response.status(401).json({
-        message: 'You do not have access to view/update the available documents',
+        message: 'You do not have access to view/update the available document',
         document
       });
     }
@@ -107,14 +78,7 @@ const updateDocument = (request, response) => {
 };
 
 const deleteDocument = (request, response) => {
-  const documentId = request.params.id;
-  const isAdmin = RegExp('admin', 'gi').test(request.decoded.data.roleType);
-  let query;
-  if (isAdmin) {
-    query = { where: { id: documentId } };
-  } else {
-    query = { where: { id: documentId, userId: request.decoded.data.userId } };
-  }
+  const query = helper.queryUpdateDeleteDoc(request);
   models.Document.destroy(query)
   .then((document) => {
     if (!document.length === 0) {
@@ -138,14 +102,7 @@ const deleteDocument = (request, response) => {
 };
 
 const getDocumentByUserId = (request, response) => {
-  const userId = request.params.id;
-  const isAdmin = RegExp('admin', 'gi').test(request.decoded.data.roleType);
-  let query;
-  if (isAdmin) {
-    query = { where: { userId } };
-  } else {
-    query = { where: { userId, access: 'public' } };
-  }
+  const query = helper.queryFindDocById(request);
   models.Document.findAll(query)
   .then((document) => {
     if (!document.length === 0) {
