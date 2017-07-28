@@ -4,8 +4,8 @@
   "description": "An API for document management system, complete with roles and privileges",
   "main": "server.js",
   "scripts": {
-    "start": "node node_modules/gulp/bin/gulp",
-    "dev": "npm run eslint && babel-node server.js",
+    "start": "gulp production && node ./dist/server.js",
+    "dev": "node node_modules/gulp/bin/gulp",
     "test": "",
     "eslint": "eslint server.js"
   },
