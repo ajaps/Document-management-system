@@ -15,7 +15,8 @@ module.exports = {
         type: Sequelize.STRING
       },
       access: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        values: ['public', 'private', 'role'],
       },
       userId: {
         type: Sequelize.INTEGER,
@@ -26,6 +27,16 @@ module.exports = {
         },
         onUpdate: 'cascade',
         onDelete: 'cascade',
+      },
+      roleId: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Roles',
+          key: 'id',
+          as: 'roleId',
+        },
+        onUpdate: 'cascade',
       },
       createdAt: {
         allowNull: false,

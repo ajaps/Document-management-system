@@ -1,3 +1,4 @@
+
 const verifyUserParams = (request) => {
   request.assert('email', 'email field is required').notEmpty();
   request.assert('email', 'valid email address is required').isEmail();
@@ -11,6 +12,14 @@ const verifyDocumentParams = (request) => {
   request.assert('title', '10 to 20 characters required').len(10, 30);
   request.assert('content', 'Document content cannot be empty').notEmpty();
   return request.getValidationResult();
+};
+
+const verifyString = (string) => {
+  const isNumber = string / 1;
+  if (isNumber >= 0 || isNumber < 0) {
+    return false;
+  }
+  return true;
 };
 
 const paginate = (request) => {
@@ -37,15 +46,17 @@ const queryForAllDocuments = (request) => {
       limit: getPaginate[1],
     };
   }
-  return { order: [['createdAt', 'DESC']],
+  return {
+    order: [['createdAt', 'DESC']],
     offset: getPaginate[0],
     limit: getPaginate[1],
     where: {
       $or: [
         { userId: request.decoded.data.userId },
-        { access: 'public' }
+        { access: 'public' },
+        { access: 'role', roleId: request.decoded.data.roleId },
       ]
-    }
+    },
   };
 };
 
@@ -83,6 +94,18 @@ const querySearchDocuments = (request) => {
   };
 };
 
+const queryDocumentsByRole = (request) => {
+  const roleId = request.params.id;
+  const isAdmin = RegExp('admin', 'gi').test(request.decoded.data.roleType);
+  if (isAdmin) {
+    return { where: { roleId } };
+  } else if (roleId === request.decoded.data.roleId) {
+    return { where: { roleId } };
+  }
+  return false;
+};
+
+
 module.exports = {
   verifyUserParams,
   verifyDocumentParams,
@@ -91,4 +114,6 @@ module.exports = {
   queryUpdateDeleteDoc,
   queryFindDocById,
   querySearchDocuments,
+  queryDocumentsByRole,
+  verifyString,
 };

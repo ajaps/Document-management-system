@@ -6,6 +6,7 @@ module.exports = {
         content: 'Who b this goat?',
         access: 'public',
         userId: 1,
+        roleId: 1,
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -14,6 +15,7 @@ module.exports = {
         content: 'Who b this fush?',
         access: 'private',
         userId: 2,
+        roleId: 2,
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -22,6 +24,7 @@ module.exports = {
         content: 'Who b this goat?',
         access: 'role',
         userId: 3,
+        roleId: 3,
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -30,6 +33,7 @@ module.exports = {
         content: 'Who b this tortoise?',
         access: 'role',
         userId: 4,
+        roleId: 2,
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -38,6 +42,7 @@ module.exports = {
         content: 'Did i do that? did i really do that?',
         access: 'role',
         userId: 2,
+        roleId: 2,
         createdAt: new Date(),
         updatedAt: new Date()
       }], {});

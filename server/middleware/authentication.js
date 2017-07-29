@@ -30,7 +30,18 @@ const verifyToken = (request, response, next) => {
   }
 };
 
+const adminPass = (request, response, next) => {
+  const isAdmin = RegExp('admin', 'gi').test(request.decoded.data.roleType);
+  if (!isAdmin) {
+    return response.status(401).json({
+      message: 'Admin priviledges is required to create new roles',
+    });
+  }
+  next();
+};
+
 module.exports = {
   verifyToken,
   setUserToken,
+  adminPass,
 };
