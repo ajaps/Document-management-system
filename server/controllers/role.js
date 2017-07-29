@@ -1,4 +1,5 @@
 import models from '../models/index';
+import helper from '../helpers/helper';
 
 
 const getAllRoles = (request, response) => {
@@ -18,7 +19,32 @@ const getAllRoles = (request, response) => {
   });
 };
 
+const createRoles = (request, response) => {
+  const isString = helper.verifyString(request.body.roleName);
+  if (!isString) {
+    return response.status(406).json({
+      message: 'roleName must be a string',
+    });
+  }
+  models.Role.create({
+    roleName: request.body.roleName,
+  })
+  .then((role) => {
+    response.status(200).json({
+      message: 'successful',
+      role,
+    });
+  })
+  .catch((error) => {
+    response.status(400).json({
+      message: 'An error occured retrieving roles',
+      data: error,
+    });
+  });
+};
+
 module.exports = {
   getAllRoles,
+  createRoles,
 };
 
