@@ -14,8 +14,8 @@ const createUser = (request, response) => {
       response.status(412).json({ message: verifiedParams });
       return;
     }
-    const password = request.body.password || request.query.password;
-    const email = request.body.email || request.query.email;
+    const password = request.body.password;
+    const email = request.body.email;
     const hashPassword = bcrypt.hashSync(password, saltRounds);
     models.User.create({
       email,
@@ -49,8 +49,8 @@ const loginUser = (request, response) => {
       response.status(412).json({ message: verifiedParams });
       return;
     }
-    const plainTextpassword = request.body.password || request.query.password;
-    const email = request.body.email || request.query.email;
+    const plainTextpassword = request.body.password;
+    const email = request.body.email;
     let validUser = false;
     models.User.find({
       where: {
@@ -129,11 +129,9 @@ const findUser = (request, response) => {
 const updateUser = (request, response) => {
   const userId = request.params.id;
   const isAdmin = RegExp('admin', 'gi').test(request.decoded.data.roleType);
-  if (!isAdmin && (request.body.roleId !== undefined)) {
-    return response.status(401).json({
-      message: "Ooops!! Only an Admin can update users' role",
-      error: 401 });
-  }
+  request.body.roleId = isAdmin ? request.body.roleId :
+    request.body.roleId = null;
+
   if (!isAdmin && userId !== request.decoded.data.userId) {
     return response.status(401).json({
       message: "Only an Admin can update another user's attributes",
@@ -190,7 +188,6 @@ const deleteUser = (request, response) => {
     });
   });
 };
-
 
 module.exports = {
   createUser,

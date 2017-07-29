@@ -125,6 +125,29 @@ const getDocumentByUserId = (request, response) => {
   });
 };
 
+const getDocumentByRole = (request, response) => {
+  const query = helper.queryDocumentsByRole(request);
+  if (query === false) {
+    response.status(400).json({
+      message: 'You need permission to view documents under this role',
+      error: true,
+    });
+  }
+  models.Document.findAndCountAll(query)
+  .then((documents) => {
+    response.status(200).json({
+      documentCount: documents.count,
+      message: 'successful',
+      document: documents.rows,
+    });
+  })
+  .catch((error) => {
+    response.status(400).json({
+      message: 'An error occured retrieving documents',
+      data: error,
+    });
+  });
+};
 
 module.exports = {
   createDocument,
@@ -132,4 +155,5 @@ module.exports = {
   updateDocument,
   deleteDocument,
   getDocumentByUserId,
+  getDocumentByRole,
 };

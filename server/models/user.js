@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
   User.associate = (models) => {
     User.belongsTo(models.Role, {
       foreignKey: 'roleId',
+      onUpdate: 'CASCADE',
     });
     User.hasMany(models.Document, {
       foreignKey: 'userId',
