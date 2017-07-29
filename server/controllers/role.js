@@ -19,7 +19,7 @@ const getAllRoles = (request, response) => {
   });
 };
 
-const createRoles = (request, response) => {
+const createRole = (request, response) => {
   const isString = helper.verifyString(request.body.roleName);
   if (!isString) {
     return response.status(406).json({
@@ -43,8 +43,31 @@ const createRoles = (request, response) => {
   });
 };
 
+const updateRole = (request, response) => {
+  const roleId = request.params.id;
+  if (roleId === request.decoded.data.roleId) {
+    return response.status(400).json({
+      message: 'The Admin role cannot be update',
+    });
+  }
+  models.Role.update(request.body, { where: { id: roleId } })
+  .then(() => {
+    response.status(200).json({
+      message: 'updated successfully',
+    });
+  })
+  .catch((error) => {
+    response.status(400).json({
+      message: 'An error occured updating roleName',
+      error,
+    });
+  });
+};
+
+
 module.exports = {
   getAllRoles,
-  createRoles,
+  createRole,
+  updateRole,
 };
 
