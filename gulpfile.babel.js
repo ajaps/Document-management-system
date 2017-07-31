@@ -5,6 +5,7 @@ import jasmineNode from 'gulp-jasmine-node';
 import istanbul from 'gulp-istanbul';
 import injectModules from 'gulp-inject-modules';
 import exit from 'gulp-exit';
+import coveralls from 'gulp-coveralls';
 
 // Load the gulp plugins into the `plugins` variable
 const plugins = loadPlugins();
@@ -17,9 +18,10 @@ const jasmineNodeOpts = {
 };
 
 gulp.task('tests', () => {
-  gulp.src('./server/tests/**/*.js')
+  gulp.src('./server/tests/*.js')
     .pipe(plugins.babel())
-    .pipe(jasmineNode(jasmineNodeOpts));
+    .pipe(jasmineNode(jasmineNodeOpts))
+    .pipe(exit());
 });
 
 
@@ -31,11 +33,11 @@ gulp.task('babel', () =>
 );
 
 gulp.task('coverage', (cb) => {
-  gulp.src('build/routes/*.js')
+  gulp.src('./dist/**/*.js')
     .pipe(istanbul())
     .pipe(istanbul.hookRequire())
     .on('finish', () => {
-      gulp.src('./tests/**/*.js')
+      gulp.src('./dist/tests/*.js')
         .pipe(plugins.babel())
         .pipe(injectModules())
         .pipe(jasmineNode())
@@ -46,6 +48,8 @@ gulp.task('coverage', (cb) => {
     });
 });
 
+gulp.task('coveralls', () => gulp.src('./coverage/lcov')
+    .pipe(coveralls()));
 
 // Restart server with on every changes made to file
 gulp.task('nodemon', ['babel'], () =>

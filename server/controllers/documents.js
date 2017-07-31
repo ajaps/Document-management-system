@@ -15,6 +15,7 @@ const createDocument = (request, response) => {
       content: request.body.content,
       access: request.body.access,
       userId: request.decoded.data.userId,
+      roleId: request.decoded.data.roleId,
     })
     .then((document) => {
       response.status(201).json({
@@ -42,12 +43,6 @@ const getAllDocument = (request, response) => {
       message: 'successful',
       document: documents.rows,
     });
-  })
-  .catch((error) => {
-    response.status(400).json({
-      message: 'An error occured retrieving documents',
-      data: error,
-    });
   });
 };
 
@@ -56,9 +51,9 @@ const updateDocument = (request, response) => {
   const query = helper.queryUpdateDeleteDoc(request);
   models.Document.update(request.body, query)
   .then((document) => {
-    if (!document.length === 0) {
+    if (document[0] !== 0) {
       response.status(200).json({
-        message: 'successful',
+        message: 'updated successfully',
         document
       });
     } else {
@@ -67,13 +62,6 @@ const updateDocument = (request, response) => {
         document
       });
     }
-  })
-  .catch((error) => {
-    response.status(400).json({
-      message: `An error occured updating document, confirm you
-      have access right to update this document.`,
-      error,
-    });
   });
 };
 
@@ -81,9 +69,9 @@ const deleteDocument = (request, response) => {
   const query = helper.queryUpdateDeleteDoc(request);
   models.Document.destroy(query)
   .then((document) => {
-    if (!document.length === 0) {
+    if (document !== 0) {
       response.status(200).json({
-        message: 'successful',
+        message: 'deleted successfully',
         document
       });
     } else {
@@ -92,12 +80,6 @@ const deleteDocument = (request, response) => {
         document
       });
     }
-  })
-  .catch((error) => {
-    response.status(400).json({
-      message: 'An error occured! Document could not be deleted',
-      error,
-    });
   });
 };
 
@@ -105,22 +87,9 @@ const getDocumentByUserId = (request, response) => {
   const query = helper.queryFindDocById(request);
   models.Document.findAll(query)
   .then((document) => {
-    if (!document.length === 0) {
-      response.status(200).json({
-        message: 'successful',
-        document
-      });
-    } else {
-      response.status(401).json({
-        message: 'You do not have access to view the available documents',
-        document
-      });
-    }
-  })
-  .catch((error) => {
-    response.status(400).json({
-      message: 'An error occured! Document could not be deleted',
-      error,
+    response.status(200).json({
+      message: 'retrieved successfully',
+      document
     });
   });
 };
@@ -137,14 +106,8 @@ const getDocumentByRole = (request, response) => {
   .then((documents) => {
     response.status(200).json({
       documentCount: documents.count,
-      message: 'successful',
+      message: 'retrieved successfully',
       document: documents.rows,
-    });
-  })
-  .catch((error) => {
-    response.status(400).json({
-      message: 'An error occured retrieving documents',
-      data: error,
     });
   });
 };
