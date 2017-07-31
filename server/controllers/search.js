@@ -10,10 +10,6 @@ const searchUser = (request, response) => {
     const filteredUsers = users.filter(user =>
     RegExp(searchTerm, 'gi').test(user.email));
     response.status(200).json({ users: filteredUsers });
-  })
-  .catch((error) => {
-    response.status(404).json(
-      { message: 'An unexpected error occured, try agian later', error });
   });
 };
 
@@ -26,12 +22,6 @@ const searchDocument = (request, response) => {
     const filteredDocs = documents.filter(document =>
     RegExp(searchTerm, 'gi').test(document.title));
     response.status(200).json({ Documents: filteredDocs });
-  })
-  .catch((error) => {
-    response.status(400).json({
-      message: 'An error occured retrieving documents',
-      error,
-    });
   });
 };
 

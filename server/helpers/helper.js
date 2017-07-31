@@ -3,7 +3,7 @@ const verifyUserParams = (request) => {
   request.assert('email', 'email field is required').notEmpty();
   request.assert('email', 'valid email address is required').isEmail();
   request.assert('password', 'password field is required').notEmpty();
-  request.assert('password', '8 to 20 characters required').len(8, 20);
+  request.assert('password', '8 or more characters required').len(8);
   return request.getValidationResult();
 };
 
@@ -29,8 +29,8 @@ const paginate = (request) => {
     limit = 1;
   }
   if (!size || size < 1) {
-    const offset = 5 * (limit - 1);
-    return [offset, 5];
+    const offset = 10 * (limit - 1);
+    return [offset, 10];
   }
   const offset = Number(size * (limit - 1));
   return [offset, size];
@@ -39,7 +39,7 @@ const paginate = (request) => {
 
 const queryForAllDocuments = (request) => {
   const getPaginate = paginate(request);
-  const isAdmin = RegExp('admin', 'gi').test(request.decoded.data.roleType);
+  const isAdmin = request.decoded.data.roleId === 1;
   if (isAdmin) {
     return { order: [['createdAt', 'DESC']],
       offset: getPaginate[0],
@@ -62,7 +62,7 @@ const queryForAllDocuments = (request) => {
 
 const queryUpdateDeleteDoc = (request) => {
   const documentId = request.params.id;
-  const isAdmin = RegExp('admin', 'gi').test(request.decoded.data.roleType);
+  const isAdmin = request.decoded.data.roleId === 1;
   if (isAdmin) {
     return { where: { id: documentId } };
   }
@@ -72,7 +72,7 @@ const queryUpdateDeleteDoc = (request) => {
 
 const queryFindDocById = (request) => {
   const userId = request.params.id;
-  const isAdmin = RegExp('admin', 'gi').test(request.decoded.data.roleType);
+  const isAdmin = request.decoded.data.roleId === 1;
   if (isAdmin) {
     return { where: { userId } };
   }
@@ -80,7 +80,7 @@ const queryFindDocById = (request) => {
 };
 
 const querySearchDocuments = (request) => {
-  const isAdmin = RegExp('admin', 'gi').test(request.decoded.data.roleType);
+  const isAdmin = request.decoded.data.roleId === 1;
   if (isAdmin) {
     return { order: [['createdAt', 'DESC']] };
   }
@@ -96,7 +96,7 @@ const querySearchDocuments = (request) => {
 
 const queryDocumentsByRole = (request) => {
   const roleId = request.params.id;
-  const isAdmin = RegExp('admin', 'gi').test(request.decoded.data.roleType);
+  const isAdmin = request.decoded.data.roleId === 1;
   if (isAdmin) {
     return { where: { roleId } };
   } else if (roleId === request.decoded.data.roleId) {

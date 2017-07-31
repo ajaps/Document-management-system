@@ -24,14 +24,12 @@ const verifyToken = (request, response, next) => {
       next();
     });
   } else {
-    response.status(428).json({
-      message: 'A token is requeired for authentication'
-    });
+    response.status(428).json('A token is requeired for authentication');
   }
 };
 
 const adminPass = (request, response, next) => {
-  const isAdmin = RegExp('admin', 'gi').test(request.decoded.data.roleType);
+  const isAdmin = request.decoded.data.roleId === 1;
   if (!isAdmin) {
     return response.status(401).json({
       message: 'Admin priviledges is required to create new roles',
