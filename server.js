@@ -1,7 +1,10 @@
 import bodyParser from 'body-parser';
+import dotenv from 'dotenv';
 import express from 'express';
 import expressValidator from 'express-validator';
 import routes from './routes/index';
+
+dotenv.config();
 
 const server = express();
 server.use(bodyParser.urlencoded({ extended: false }));

@@ -63,7 +63,7 @@ describe('When user', () => {
       .set({ Authorization: adminToken })
       .send({ roleName: 'student' })
       .end((err, res) => {
-        expect(res.body.message).to.be.equal('The Admin role cannot be update');
+        expect(res.body.message).to.be.equal('Admin role cannot be update');
         expect(res.statusCode).to.be.equal(400);
         done();
       });

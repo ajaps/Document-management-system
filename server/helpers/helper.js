@@ -14,6 +14,12 @@ const verifyDocumentParams = (request) => {
   return request.getValidationResult();
 };
 
+const verifyIsInt = (request) => {
+  request.assert('id', 'ID must be specified for this operation').notEmpty();
+  request.assert('id', 'ID must be a number').isInt();
+  return request.getValidationResult();
+};
+
 const verifyString = (string) => {
   const isNumber = string / 1;
   if (isNumber >= 0 || isNumber < 0) {
@@ -32,8 +38,8 @@ const paginate = (request) => {
     const offset = 10 * (limit - 1);
     return [offset, 10];
   }
-  const offset = Number(size * (limit - 1));
-  return [offset, size];
+  const offset = size;
+  return [offset, limit];
 };
 
 
@@ -94,13 +100,22 @@ const querySearchDocuments = (request) => {
   };
 };
 
+const findUserById = (request) => {
+  const userId = request.params.id;
+  return {
+    attributes: ['id', 'email', 'roleId'],
+    where: { id: userId }
+  };
+};
+
+
 const queryDocumentsByRole = (request) => {
   const roleId = request.params.id;
   const isAdmin = request.decoded.data.roleId === 1;
   if (isAdmin) {
-    return { where: { roleId } };
+    return { where: { roleId }, order: [['createdAt', 'DESC']] };
   } else if (roleId === request.decoded.data.roleId) {
-    return { where: { roleId } };
+    return { where: { roleId }, order: [['createdAt', 'DESC']] };
   }
   return false;
 };
@@ -116,4 +131,6 @@ module.exports = {
   querySearchDocuments,
   queryDocumentsByRole,
   verifyString,
+  verifyIsInt,
+  findUserById,
 };

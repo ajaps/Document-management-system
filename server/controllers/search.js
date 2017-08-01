@@ -1,6 +1,13 @@
-import models from '../models/index';
 import helper from '../helpers/helper';
+import models from '../models/index';
 
+/**
+   * Searches for users in the database
+   * @function searchUser
+   * @param {object} request request
+   * @param {object} response response
+   * @return {object} object - information about the status of the request
+   */
 const searchUser = (request, response) => {
   const searchTerm = request.query.q;
   models.User.findAll({ attributes: ['id', 'email', 'roleId'],
@@ -14,6 +21,13 @@ const searchUser = (request, response) => {
 };
 
 
+/**
+   * Searches for documents in the database
+   * @function searchDocument
+   * @param {object} request request
+   * @param {object} response response
+   * @return {object} object - information about the status of the request
+   */
 const searchDocument = (request, response) => {
   const query = helper.querySearchDocuments(request);
   const searchTerm = request.query.q;

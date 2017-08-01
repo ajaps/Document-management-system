@@ -94,8 +94,7 @@ const mockData = {
     createdAt: '2017-07-31T13:34:15.303Z',
     updatedAt: '2017-07-31T13:34:15.303Z' }],
 
-  foundUsers: [{ id: 4, email: 'framky0071@yahoo.com', roleId: 2 },
-     { id: 3, email: 'framky007@yahoo.com', roleId: 3 }],
+  foundUsers: { id: 1, email: 'ajaps@yahoo.com', roleId: 1 },
 };
 
 

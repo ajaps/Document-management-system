@@ -15,7 +15,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       access: {
-        type: Sequelize.STRING,
+        type: Sequelize.ENUM,
         values: ['public', 'private', 'role'],
       },
       userId: {

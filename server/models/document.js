@@ -13,10 +13,6 @@ module.exports = (sequelize, DataTypes) => {
     access: {
       defaultValue: 'public',
       values: ['public', 'private', 'role'],
-      isIn: {
-        args: [['public', 'private', 'role']],
-        msg: 'Must be public, private or role',
-      },
       type: DataTypes.STRING,
     },
     userId: {
