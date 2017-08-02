@@ -5,6 +5,13 @@ import authentication from '../middleware/authentication';
 
 const saltRounds = 10;
 
+/**
+   * Creates new user
+   * @function createUser
+   * @param {object} request request
+   * @param {object} response response
+   * @return {object} object - information about the status of the request
+   */
 const createUser = (request, response) => {
   helper.verifyUserParams(request)
   .then((result) => {
@@ -38,7 +45,13 @@ const createUser = (request, response) => {
   });
 };
 
-
+/**
+   * login user, checks the availability of email and passowrd in the database
+   * @function loginUser
+   * @param {object} request request
+   * @param {object} response response
+   * @return {object} object - information about the status of the request
+   */
 const loginUser = (request, response) => {
   helper.verifyUserParams(request)
   .then((result) => {
@@ -82,6 +95,13 @@ const loginUser = (request, response) => {
 };
 
 
+/**
+   * Gets all instance of user in the database
+   * @function allUser
+   * @param {object} request request
+   * @param {object} response response
+   * @return {object} object - information about the status of the request
+   */
 const allUser = (request, response) => {
   const paginate = helper.paginate(request);
   models.User.findAndCountAll({ attributes: ['id', 'email', 'roleId'],
@@ -98,31 +118,35 @@ const allUser = (request, response) => {
 };
 
 
+/**
+   * find user in the database by ID
+   * @function findUser
+   * @param {object} request request
+   * @param {object} response response
+   * @return {object} object - information about the status of the request
+   */
 const findUser = (request, response) => {
-  const userId = request.params.id;
-  if (Number(userId) / 1 > 0) {
-    models.User.findById(userId)
-    .then((user) => {
-      const result = { userID: user.id,
-        roleId: user.roleId,
-        email: user.email
-      };
-      return response.status(200).json({ result });
-    })
-    .catch(error =>
-      response.status(404).json({
-        message: `cannot find user with ID: ${userId}`,
-        error,
-      })
-    );
-  } else {
-    return response.status(404).json({
-      message: 'You need an ID to locate a user',
-      error: true
-    });
-  }
+  helper.verifyIsInt(request)
+  .then((result) => {
+    const verifiedParams = result.mapped();
+    const noErrors = result.isEmpty();
+    if (!noErrors) {
+      return response.status(412).json({ message: verifiedParams });
+    }
+    const query = helper.findUserById(request);
+    models.User.findAll(query)
+    .then(user => response.status(200).json({ user }));
+  });
 };
 
+
+/**
+   * Updats user attributes in the database
+   * @function updateUser
+   * @param {object} request request
+   * @param {object} response response
+   * @return {object} object - information about the status of the request
+   */
 const updateUser = (request, response) => {
   const userId = Number(request.params.id);
   const isAdmin = RegExp('admin', 'gi').test(request.decoded.data.roleType);
@@ -154,11 +178,18 @@ const updateUser = (request, response) => {
   .catch(error =>
     response.status(409).json({
       message: 'Could not updating user details, verify the ID is valid',
-      error,
+      error: error.errors,
     })
   );
 };
 
+/**
+   * deletes user record from the database
+   * @function deleteUser
+   * @param {object} request request
+   * @param {object} response response
+   * @return {object} object - information about the status of the request
+   */
 const deleteUser = (request, response) => {
   const deleteUserId = request.params.id;
   const isAdmin = request.decoded.data.roleId === 1;

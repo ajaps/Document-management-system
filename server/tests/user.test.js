@@ -131,24 +131,13 @@ describe('When user', () => {
   });
 
   describe('search for users by ID', () => {
-    it('should return status code 404 if userID is not specified', (done) => {
+    it('should return status code 412 if userID is not specified', (done) => {
       request.get('/api/v1/users/fr')
     .set({ Authorization: regularToken })
     .set('Accept', 'application/json')
     .end((err, res) => {
-      expect(res.body.message).to.be.equal('You need an ID to locate a user');
-      expect(res.statusCode).to.be.equal(404);
-      done();
-    });
-    });
-    it(`should return 'cannot find user with ID: 10' and status 404
-      when the ID doesn't exist in the database`, (done) => {
-      request.get('/api/v1/users/1000')
-    .set({ Authorization: regularToken })
-    .set('Accept', 'application/json')
-    .end((err, res) => {
-      expect(res.body.message).to.be.equal('cannot find user with ID: 1000');
-      expect(res.statusCode).to.be.equal(404);
+      expect(res.body.message.id.msg).to.be.equal('ID must be a number');
+      expect(res.statusCode).to.be.equal(412);
       done();
     });
     });
@@ -158,7 +147,7 @@ describe('When user', () => {
       .set('Accept', 'application/json')
     .set({ Authorization: regularToken })
     .end((err, res) => {
-      expect(res.body.result).to.eql(mockData.foundUser);
+      expect(res.body.user).to.be.an('array');
       expect(res.statusCode).to.be.equal(200);
       done();
     });

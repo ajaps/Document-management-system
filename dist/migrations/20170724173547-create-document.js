@@ -1,32 +1,34 @@
+'use strict';
+
 module.exports = {
-  up(queryInterface, Sequelize) {
+  up: function up(queryInterface, Sequelize) {
     return queryInterface.createTable('Documents', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: Sequelize.INTEGER
       },
       title: {
         type: Sequelize.STRING,
-        unique: true,
+        unique: true
       },
       content: {
         type: Sequelize.STRING
       },
       access: {
         type: Sequelize.ENUM,
-        values: ['public', 'private', 'role'],
+        values: ['public', 'private', 'role']
       },
       userId: {
         type: Sequelize.INTEGER,
         references: {
           model: 'Users',
           key: 'id',
-          as: 'userId',
+          as: 'userId'
         },
         onUpdate: 'cascade',
-        onDelete: 'cascade',
+        onDelete: 'cascade'
       },
       roleId: {
         allowNull: false,
@@ -34,9 +36,9 @@ module.exports = {
         references: {
           model: 'Roles',
           key: 'id',
-          as: 'roleId',
+          as: 'roleId'
         },
-        onUpdate: 'cascade',
+        onUpdate: 'cascade'
       },
       createdAt: {
         allowNull: false,
@@ -48,7 +50,7 @@ module.exports = {
       }
     });
   },
-  down(queryInterface) {
+  down: function down(queryInterface) {
     return queryInterface.dropTable('Documents');
   }
 };

@@ -1,5 +1,14 @@
-import models from '../models/index';
-import helper from '../helpers/helper';
+'use strict';
+
+var _index = require('../models/index');
+
+var _index2 = _interopRequireDefault(_index);
+
+var _helper = require('../helpers/helper');
+
+var _helper2 = _interopRequireDefault(_helper);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
    * Creates a new instance of document in the database
@@ -8,37 +17,33 @@ import helper from '../helpers/helper';
    * @param {object} response response
    * @return {object} object - information about the request
    */
-const createDocument = (request, response) => {
-  helper.verifyDocumentParams(request)
-  .then((result) => {
-    const verifiedParams = result.mapped();
-    const noErrors = result.isEmpty();
+var createDocument = function createDocument(request, response) {
+  _helper2.default.verifyDocumentParams(request).then(function (result) {
+    var verifiedParams = result.mapped();
+    var noErrors = result.isEmpty();
     if (!noErrors) {
       return response.status(412).json({ message: verifiedParams });
     }
-    models.Document.create({
+    _index2.default.Document.create({
       title: request.body.title,
       content: request.body.content,
       access: request.body.access,
       userId: request.decoded.data.userId,
-      roleId: request.decoded.data.roleId,
-    })
-    .then((document) => {
+      roleId: request.decoded.data.roleId
+    }).then(function (document) {
       response.status(201).json({
         message: 'New Document created successfully',
         title: document.title,
-        ownerId: request.decoded.data.userId,
+        ownerId: request.decoded.data.userId
       });
-    })
-    .catch((error) => {
+    }).catch(function (error) {
       response.status(409).json({
         message: 'An error occured creating new document',
-        data: error.errors,
+        data: error.errors
       });
     });
   });
 };
-
 
 /**
    * fetches all documents in the database according to the users' access right
@@ -48,21 +53,19 @@ const createDocument = (request, response) => {
    * @return {object} object - nformation about the documents
    * in the database
    */
-const getAllDocument = (request, response) => {
-  const query = helper.queryForAllDocuments(request);
-  models.Document.findAndCountAll(query)
-  .then(documents =>
-    response.status(200).json({
+var getAllDocument = function getAllDocument(request, response) {
+  var query = _helper2.default.queryForAllDocuments(request);
+  _index2.default.Document.findAndCountAll(query).then(function (documents) {
+    return response.status(200).json({
       message: 'successful',
       page: query.offset,
       pageCount: Math.ceil(documents.count / query.limit),
       pageSize: query.limit,
       totalCount: documents.count,
-      document: documents.rows,
-    })
-  );
+      document: documents.rows
+    });
+  });
 };
-
 
 /**
    * updates document in the database that matches the document ID supplied
@@ -71,26 +74,24 @@ const getAllDocument = (request, response) => {
    * @param {object} response response
    * @return {object} object - information about the document updated
    */
-const updateDocument = (request, response) => {
-  helper.verifyIsInt(request)
-  .then((result) => {
-    const verifiedParams = result.mapped();
-    const noErrors = result.isEmpty();
+var updateDocument = function updateDocument(request, response) {
+  _helper2.default.verifyIsInt(request).then(function (result) {
+    var verifiedParams = result.mapped();
+    var noErrors = result.isEmpty();
     if (!noErrors) {
       return response.status(412).json({ message: verifiedParams });
     }
-    const query = helper.queryUpdateDeleteDoc(request);
-    models.Document.update(request.body, query)
-    .then((document) => {
+    var query = _helper2.default.queryUpdateDeleteDoc(request);
+    _index2.default.Document.update(request.body, query).then(function (document) {
       if (document[0] !== 0) {
         response.status(200).json({
           message: 'updated successfully',
-          document
+          document: document
         });
       } else {
         response.status(401).json({
           message: 'You do not have access to view/update the available document',
-          document
+          document: document
         });
       }
     });
@@ -104,26 +105,24 @@ const updateDocument = (request, response) => {
    * @param {object} response response
    * @return {object} object - information about the deleted document
    */
-const deleteDocument = (request, response) => {
-  helper.verifyIsInt(request)
-  .then((result) => {
-    const verifiedParams = result.mapped();
-    const noErrors = result.isEmpty();
+var deleteDocument = function deleteDocument(request, response) {
+  _helper2.default.verifyIsInt(request).then(function (result) {
+    var verifiedParams = result.mapped();
+    var noErrors = result.isEmpty();
     if (!noErrors) {
       return response.status(412).json({ message: verifiedParams });
     }
-    const query = helper.queryUpdateDeleteDoc(request);
-    models.Document.destroy(query)
-    .then((document) => {
+    var query = _helper2.default.queryUpdateDeleteDoc(request);
+    _index2.default.Document.destroy(query).then(function (document) {
       if (document !== 0) {
         response.status(200).json({
           message: 'deleted successfully',
-          document
+          document: document
         });
       } else {
         response.status(401).json({
           message: 'You do not have access to view/delete the available documents',
-          document
+          document: document
         });
       }
     });
@@ -137,25 +136,22 @@ const deleteDocument = (request, response) => {
    * @param {object} response response
    * @return {object} object - information about the status of the request
    */
-const getDocumentByUserId = (request, response) => {
-  helper.verifyIsInt(request)
-  .then((result) => {
-    const verifiedParams = result.mapped();
-    const noErrors = result.isEmpty();
+var getDocumentByUserId = function getDocumentByUserId(request, response) {
+  _helper2.default.verifyIsInt(request).then(function (result) {
+    var verifiedParams = result.mapped();
+    var noErrors = result.isEmpty();
     if (!noErrors) {
       return response.status(412).json({ message: verifiedParams });
     }
-    const query = helper.queryFindDocById(request);
-    models.Document.findAll(query)
-    .then(document =>
-      response.status(200).json({
+    var query = _helper2.default.queryFindDocById(request);
+    _index2.default.Document.findAll(query).then(function (document) {
+      return response.status(200).json({
         message: 'retrieved successfully',
-        document
-      })
-    );
+        document: document
+      });
+    });
   });
 };
-
 
 /**
    * gets all documents that matches the roleId
@@ -164,37 +160,35 @@ const getDocumentByUserId = (request, response) => {
    * @param {object} response response
    * @return {object} object - information about the status of the request
    */
-const getDocumentByRole = (request, response) => {
-  helper.verifyIsInt(request)
-  .then((result) => {
-    const verifiedParams = result.mapped();
-    const noErrors = result.isEmpty();
+var getDocumentByRole = function getDocumentByRole(request, response) {
+  _helper2.default.verifyIsInt(request).then(function (result) {
+    var verifiedParams = result.mapped();
+    var noErrors = result.isEmpty();
     if (!noErrors) {
       return response.status(412).json({ message: verifiedParams });
     }
-    const query = helper.queryDocumentsByRole(request);
+    var query = _helper2.default.queryDocumentsByRole(request);
     if (query === false) {
       response.status(400).json({
         message: 'You need permission to view documents under this role',
-        error: true,
+        error: true
       });
     }
-    models.Document.findAndCountAll(query)
-    .then((documents) => {
+    _index2.default.Document.findAndCountAll(query).then(function (documents) {
       response.status(200).json({
         documentCount: documents.count,
         message: 'retrieved successfully',
-        document: documents.rows,
+        document: documents.rows
       });
     });
   });
 };
 
 module.exports = {
-  createDocument,
-  getAllDocument,
-  updateDocument,
-  deleteDocument,
-  getDocumentByUserId,
-  getDocumentByRole,
+  createDocument: createDocument,
+  getAllDocument: getAllDocument,
+  updateDocument: updateDocument,
+  deleteDocument: deleteDocument,
+  getDocumentByUserId: getDocumentByUserId,
+  getDocumentByRole: getDocumentByRole
 };

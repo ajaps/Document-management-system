@@ -39,7 +39,7 @@ describe('When user', () => {
     it(`should return a status code 412,
       when document content is empty`, (done) => {
       request.post('/api/v1/documents')
-    .set({ Authorization: regularToken })
+    .set({ Authorization: adminToken })
     .set('Accept', 'application/json')
     .send({ title: 'history 101' })
     .end((err, res) => {
@@ -71,7 +71,7 @@ describe('When user', () => {
       .set('Accept', 'application/json')
       .set({ Authorization: regularToken })
       .end((err, res) => {
-        expect(res.body.documentCount).to.equal(5);
+        expect(res.body.totalCount).to.equal(5);
         expect(res.statusCode).to.be.equal(200);
         done();
       });
