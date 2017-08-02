@@ -5,12 +5,11 @@
   "main": "server.js",
   "scripts": {
     "start": "gulp production && node ./dist/server.js",
-    "dev": "node node_modules/gulp/bin/gulp",
     "test": "npm run undomigrate && npm run migratedb && npm run seedall",
-    "posttest": "NODE_ENV=test node node_modules/gulp/bin/gulp coverage && gulp coveralls",
-    "devtest": "NODE_ENV=test gulp test",
-    "eslint": "eslint server.js",
-    "cleardb": "NODE_ENV=test sequelize db:migrate:undo:all",
+    "posttest": "NODE_ENV=test node node_modules/gulp/bin/gulp coverage && NODE_ENV=test gulp coveralls",
+    "predevtest": "npm run cleardb && NODE_ENV=localtest sequelize db:migrate && NODE_ENV=localtest sequelize db:seed:all",
+    "devtest": "NODE_ENV=localtest node node_modules/gulp/bin/gulp coverage && node node_modules/.bin/coveralls",
+    "cleardb": "NODE_ENV=localtest sequelize db:migrate:undo:all",
     "migratedb": "DATABASE_URL=postgres://alqyjggv:j2-Y8CBEjXmVyk8N-BnRigzvoGeb8_PD@qdjjtnkv.db.elephantsql.com:5432/alqyjggv NODE_ENV=test sequelize db:migrate",
     "undomigrate": "DATABASE_URL=postgres://alqyjggv:j2-Y8CBEjXmVyk8N-BnRigzvoGeb8_PD@qdjjtnkv.db.elephantsql.com:5432/alqyjggv NODE_ENV=test sequelize db:migrate:undo:all",
     "seedall": "DATABASE_URL=postgres://alqyjggv:j2-Y8CBEjXmVyk8N-BnRigzvoGeb8_PD@qdjjtnkv.db.elephantsql.com:5432/alqyjggv NODE_ENV=test sequelize db:seed:all"

@@ -3,7 +3,7 @@ module.exports = {
     return queryInterface.bulkInsert('Documents', [
       {
         title: 'Introduction to 101',
-        content: 'Who b this goat?',
+        content: 'The definition of computer is',
         access: 'public',
         userId: 1,
         roleId: 1,
@@ -12,7 +12,7 @@ module.exports = {
       },
       {
         title: 'Introduction to 102',
-        content: 'Who b this fush?',
+        content: 'The study of the earth has been ongoing for centuries',
         access: 'private',
         userId: 2,
         roleId: 2,
@@ -21,7 +21,7 @@ module.exports = {
       },
       {
         title: 'Introduction to 103',
-        content: 'Who b this goat?',
+        content: 'In actual terms, the study of man and his environment',
         access: 'role',
         userId: 3,
         roleId: 3,
@@ -30,7 +30,7 @@ module.exports = {
       },
       {
         title: 'Introduction to 104',
-        content: 'Who b this tortoise?',
+        content: 'javascript keeps evolving to meet human wants and needs',
         access: 'role',
         userId: 4,
         roleId: 2,

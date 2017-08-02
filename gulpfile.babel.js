@@ -10,7 +10,7 @@ import coveralls from 'gulp-coveralls';
 // Load the gulp plugins into the `plugins` variable
 const plugins = loadPlugins();
 
-process.env.NODE_ENV = 'test';
+// process.env.NODE_ENV = 'localtest';
 
 
 const jasmineNodeOpts = {
