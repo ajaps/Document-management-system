@@ -1,5 +1,5 @@
-java_script:
+javascript:
   enabled: false
 eslint:
-  enable: true
-  config_file: .eslintrc.json
+  enabled: true
+  config_file: .eslintrc
