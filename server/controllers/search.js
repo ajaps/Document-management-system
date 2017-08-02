@@ -1,6 +1,13 @@
-import models from '../models/index';
 import helper from '../helpers/helper';
+import models from '../models/index';
 
+/**
+   * Searches for users in the database
+   * @function searchUser
+   * @param {object} request request
+   * @param {object} response response
+   * @return {object} object - information about the status of the request
+   */
 const searchUser = (request, response) => {
   const searchTerm = request.query.q;
   models.User.findAll({ attributes: ['id', 'email', 'roleId'],
@@ -10,14 +17,17 @@ const searchUser = (request, response) => {
     const filteredUsers = users.filter(user =>
     RegExp(searchTerm, 'gi').test(user.email));
     response.status(200).json({ users: filteredUsers });
-  })
-  .catch((error) => {
-    response.status(404).json(
-      { message: 'An unexpected error occured, try agian later', error });
   });
 };
 
 
+/**
+   * Searches for documents in the database
+   * @function searchDocument
+   * @param {object} request request
+   * @param {object} response response
+   * @return {object} object - information about the status of the request
+   */
 const searchDocument = (request, response) => {
   const query = helper.querySearchDocuments(request);
   const searchTerm = request.query.q;
@@ -26,12 +36,6 @@ const searchDocument = (request, response) => {
     const filteredDocs = documents.filter(document =>
     RegExp(searchTerm, 'gi').test(document.title));
     response.status(200).json({ Documents: filteredDocs });
-  })
-  .catch((error) => {
-    response.status(400).json({
-      message: 'An error occured retrieving documents',
-      error,
-    });
   });
 };
 

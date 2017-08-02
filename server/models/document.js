@@ -12,20 +12,28 @@ module.exports = (sequelize, DataTypes) => {
     },
     access: {
       defaultValue: 'public',
-      isIn: {
-        args: [['public', 'private', 'role']],
-        msg: 'Must be public, private or role',
-      },
+      values: ['public', 'private', 'role'],
       type: DataTypes.STRING,
     },
     userId: {
       allowNull: false,
       type: DataTypes.INTEGER,
     },
+    roleId: {
+      allowNull: false,
+      type: DataTypes.INTEGER,
+    },
   });
+
   Document.associate = (models) => {
     Document.belongsTo(models.User, {
       foreignKey: 'userId',
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
+    });
+    Document.belongsTo(models.Role, {
+      foreignKey: 'roleId',
+      onUpdate: 'CASCADE',
     });
   };
   return Document;
