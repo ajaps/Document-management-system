@@ -18,7 +18,10 @@ const createUser = (request, response) => {
     const verifiedParams = result.mapped();
     const noErrors = result.isEmpty();
     if (!noErrors) {
-      return response.status(412).json({ message: verifiedParams });
+      return response.status(412).json({
+        message: verifiedParams,
+        more_info: 'https://dmsys.herokuapp.com/#creates-new-user',
+      });
     }
     const password = request.body.password;
     const email = request.body.email;
@@ -28,17 +31,19 @@ const createUser = (request, response) => {
       password: hashPassword,
     })
     .then((user) => {
+      user.roleId = 2;
       const userToken = authentication.setUserToken(user);
       const data = {
         message: 'New user created successfully',
         token: userToken,
       };
-      response.status(201).json(data);
+      return response.status(201).json(data);
     })
     .catch(() => {
       const data = {
         message: `${email} already exist`,
         token: null,
+        more_info: 'https://dmsys.herokuapp.com/#creates-new-user',
       };
       return response.status(409).json(data);
     });
@@ -58,7 +63,10 @@ const loginUser = (request, response) => {
     const verifiedParams = result.mapped();
     const noErrors = result.isEmpty();
     if (!noErrors) {
-      return response.status(412).json({ message: verifiedParams });
+      return response.status(412).json({
+        message: verifiedParams,
+        more_info: 'https://dmsys.herokuapp.com/#login-user',
+      });
     }
     const plainTextpassword = request.body.password;
     const email = request.body.email;
@@ -79,17 +87,20 @@ const loginUser = (request, response) => {
         };
         const userToken = authentication.setUserToken(userInfo);
         return response.status(202).json(
-          { message: 'Logged in successful',
+          { message: 'Logged in successfully',
             token: userToken });
       }
       return response.status(401).json(
-        { message: 'Invalid username or password',
-          token: null });
+        { message: 'Invalid email or password',
+          token: null,
+          more_info: 'https://dmsys.herokuapp.com/#login-user',
+        });
     })
-    .catch(() =>
-      response.status(404).json(
-        { message: `${email} does not exist in the database`,
-          token: null })
+    .catch(() => response.status(404).json(
+      { message: `${email} does not exist in the database`,
+        token: null,
+        more_info: 'https://dmsys.herokuapp.com/#login-user',
+      })
     );
   });
 };
@@ -111,9 +122,11 @@ const allUser = (request, response) => {
   }).then(user =>
   response.status(200).json({ Total_Users: user.count, users: user.rows })
   )
-  .catch(() =>
-    response.status(404).json(
-      { message: 'An unexpected error occured, try agian later', })
+  .catch(() => response.status(500).json(
+    {
+      message: 'An unexpected error occured, try agian later',
+      more_info: 'https://dmsys.herokuapp.com/#find-matching-instances-of-user',
+    })
   );
 };
 
@@ -131,11 +144,22 @@ const findUser = (request, response) => {
     const verifiedParams = result.mapped();
     const noErrors = result.isEmpty();
     if (!noErrors) {
-      return response.status(412).json({ message: verifiedParams });
+      return response.status(412).json({
+        message: verifiedParams,
+        more_info: 'https://dmsys.herokuapp.com/#find-user',
+      });
     }
     const query = helper.findUserById(request);
     models.User.findAll(query)
-    .then(user => response.status(200).json({ user }));
+    .then((user) => {
+      if (user.length < 1) {
+        return response.status(404).json({
+          message: 'userId not found',
+          more_info: 'https://dmsys.herokuapp.com/#find-user',
+        });
+      }
+      return response.status(200).json({ user });
+    });
   });
 };
 
@@ -149,38 +173,51 @@ const findUser = (request, response) => {
    */
 const updateUser = (request, response) => {
   const userId = Number(request.params.id);
-  const isAdmin = RegExp('admin', 'gi').test(request.decoded.data.roleType);
-  request.body.roleId = isAdmin ? request.body.roleId :
-    request.body.roleId = request.decoded.data.roleId;
-  if (!isAdmin && userId !== request.decoded.data.userId) {
-    return response.status(401).json({
-      message: "Only an Admin can update another user's attributes",
-      error: 401 });
-  }
-  if (request.body.roleId === undefined) {
-    request.body.roleId = request.decoded.data.roleId;
-  }
-  if (request.body.password !== undefined) {
-    request.body.password = bcrypt.hashSync(request.body.password, saltRounds);
-  }
-  models.User.update(request.body, {
-    where: {
-      id: request.params.id
-    },
-    returning: true,
-    plain: true,
-  })
-  .then(user =>
-    response.status(200).json({
+  helper.verifyIsInt(request)
+  .then((result) => {
+    const verifiedParams = result.mapped();
+    const noErrors = result.isEmpty();
+    if (!noErrors) {
+      return response.status(412).json({
+        message: verifiedParams,
+        more_info: 'https://dmsys.herokuapp.com/#update-user',
+      });
+    }
+
+    const isAdmin = request.decoded.data.roleId === 1;
+
+    if (!isAdmin && userId !== request.decoded.data.userId) {
+      return response.status(401).json({
+        message: "Only an Admin can update another user's attributes",
+        more_info: 'https://dmsys.herokuapp.com/#update-user',
+      });
+    }
+    if (!isAdmin) {
+      delete request.body.roleId;
+    }
+    if (request.body.password !== undefined) {
+      request.body.password = bcrypt.hashSync(request.body.password, saltRounds);
+    }
+    delete request.body.id;
+    models.User.update(request.body, {
+      where: {
+        id: request.params.id
+      },
+      returning: true,
+      plain: true,
+    })
+    .then(user => response.status(200).json({
       message: 'User updated successfully',
       result: user[1].dataValues })
-  )
-  .catch(error =>
-    response.status(409).json({
-      message: 'Could not updating user details, verify the ID is valid',
+    )
+    .catch(error => response.status(409).json({
+      message: `Could not update user details,
+          verify the ID is valid and the roleId exist`,
       error: error.errors,
+      more_info: 'https://dmsys.herokuapp.com/#update-user',
     })
-  );
+    );
+  });
 };
 
 /**
@@ -199,14 +236,17 @@ const deleteUser = (request, response) => {
   } else {
     return response.status(401).json({
       message: "Only an Admin can delete another user's record",
-      error: true });
+      more_info: 'https://dmsys.herokuapp.com/#update-user',
+    });
   }
   models.User.destroy(query)
   .then((user) => {
     if (user === 0) {
       return response.status(404).json({
         message: 'User ID does not exist',
-        user });
+        user,
+        more_info: 'https://dmsys.herokuapp.com/#update-user',
+      });
     }
     return response.status(200).json({
       message: 'User deleted successfully',

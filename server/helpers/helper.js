@@ -9,7 +9,7 @@ const verifyUserParams = (request) => {
 
 const verifyDocumentParams = (request) => {
   request.assert('title', 'title field is required').notEmpty();
-  request.assert('title', '10 to 20 characters required').len(10, 30);
+  request.assert('title', '10 to 150 characters required').len(10, 150);
   request.assert('content', 'Document content cannot be empty').notEmpty();
   return request.getValidationResult();
 };
@@ -20,9 +20,9 @@ const verifyIsInt = (request) => {
   return request.getValidationResult();
 };
 
-const verifyString = (string) => {
-  const isNumber = string / 1;
-  if (isNumber >= 0 || isNumber < 0) {
+const verifyString = (stringValue) => {
+  const isNumber = stringValue / 1;
+  if (isNumber >= 0 || isNumber < 0 || stringValue === undefined) {
     return false;
   }
   return true;
@@ -88,10 +88,14 @@ const queryFindDocById = (request) => {
 const querySearchDocuments = (request) => {
   const isAdmin = request.decoded.data.roleId === 1;
   if (isAdmin) {
-    return { order: [['createdAt', 'DESC']] };
+    return {
+      title: { $iLike: `%${request.query.q}%` },
+      order: [['createdAt', 'DESC']]
+    };
   }
   return { order: [['createdAt', 'DESC']],
     where: {
+      title: { $iLike: `%${request.query.q}%` },
       $or: [
         { userId: request.decoded.data.userId },
         { access: 'public' }
@@ -110,11 +114,9 @@ const findUserById = (request) => {
 
 
 const queryDocumentsByRole = (request) => {
-  const roleId = request.params.id;
+  const roleId = Number(request.params.id);
   const isAdmin = request.decoded.data.roleId === 1;
-  if (isAdmin) {
-    return { where: { roleId }, order: [['createdAt', 'DESC']] };
-  } else if (roleId === request.decoded.data.roleId) {
+  if (isAdmin || roleId === request.decoded.data.roleId) {
     return { where: { roleId }, order: [['createdAt', 'DESC']] };
   }
   return false;

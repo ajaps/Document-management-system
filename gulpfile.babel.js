@@ -10,9 +10,6 @@ import coveralls from 'gulp-coveralls';
 // Load the gulp plugins into the `plugins` variable
 const plugins = loadPlugins();
 
-// process.env.NODE_ENV = 'localtest';
-
-
 const jasmineNodeOpts = {
   timeout: 100000,
   includeStackTrace: false,
@@ -26,27 +23,30 @@ gulp.task('tests', () => {
     .pipe(exit());
 });
 
+const sourcePaths = {
+  js: ['./**/*.js', '!dist/**', '!node_modules/**', '!coverage/**']
+};
 
 // Compile all Babel Javascript into ES5 and place in dist folder
 gulp.task('babel', () =>
-  gulp.src(['server/**/*.js', './server.js'])
+  gulp.src(sourcePaths.js, { base: '.' })
     .pipe(plugins.babel())
     .pipe(gulp.dest('dist'))
 );
 
 gulp.task('coverage', (cb) => {
-  gulp.src('./dist/**/*.js')
+  gulp.src('dist/server/**/*.js')
     .pipe(istanbul())
     .pipe(istanbul.hookRequire())
     .on('finish', () => {
-      gulp.src('./dist/tests/*.js')
-        .pipe(plugins.babel())
-        .pipe(injectModules())
-        .pipe(jasmineNode())
-        .pipe(istanbul.writeReports())
-        .pipe(istanbul.enforceThresholds({ thresholds: { global: 30 } }))
-        .on('end', cb)
-        .pipe(exit());
+      gulp.src('dist/server/tests/*.js')
+      .pipe(plugins.babel())
+      .pipe(injectModules())
+      .pipe(jasmineNode())
+      .pipe(istanbul.writeReports())
+      .pipe(istanbul.enforceThresholds({ thresholds: { global: 30 } }))
+      .on('end', cb)
+      .pipe(exit());
     });
 });
 
@@ -63,6 +63,7 @@ gulp.task('nodemon', ['babel'], () =>
   })
 );
 
-gulp.task('test', ['tests']);
+gulp.task('test', ['coverage']);
+// gulp.task('test', ['coverage']);
 gulp.task('default', ['nodemon']);
 gulp.task('production', ['babel']);
