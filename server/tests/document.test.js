@@ -1,7 +1,7 @@
 import chai from 'chai';
 import supertest from 'supertest';
 import mockData from '../mockData/mockData';
-import server from '../../dist/server';
+import server from '../../server';
 import authentication from '../middleware/authentication';
 
 const expect = chai.expect;
@@ -77,7 +77,7 @@ describe('When user', () => {
       });
     });
   });
-  describe('get instances of document', () => {
+  describe('get updates a document', () => {
     it(`should return a status code 200,
       and a JSON stating if the document updated`, (done) => {
       request.put('/api/v1/documents/3')
@@ -87,6 +87,21 @@ describe('When user', () => {
       .end((err, res) => {
         expect(res.body.message).to.be.equal('updated successfully');
         expect(res.statusCode).to.be.equal(200);
+        done();
+      });
+    });
+
+    it(`should return a status code 400,
+      and a JSON object stating the doc couldn't be updated`, (done) => {
+      request.put('/api/v1/documents/3')
+      .set('Accept', 'application/json')
+      .send({ content: 'In the beginning, God created heaven and earth',
+        roleId: 8 })
+      .set({ Authorization: adminToken })
+      .end((err, res) => {
+        expect(res.body.message).to
+        .be.equal('An unexpected error occured while updating document');
+        expect(res.statusCode).to.be.equal(400);
         done();
       });
     });
@@ -149,7 +164,7 @@ describe('When user', () => {
       .end((err, res) => {
         expect(res.body.message).to.be
         .equal('You need permission to view documents under this role');
-        expect(res.statusCode).to.be.equal(400);
+        expect(res.statusCode).to.be.equal(401);
         done();
       });
     });

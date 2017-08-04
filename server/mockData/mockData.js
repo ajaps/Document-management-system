@@ -20,14 +20,11 @@ const mockData = {
   admin: { userId: 1, email: 'ajaps@yahoo.com', roleId: 1 },
   regularUser: { userId: 2, email: 'johnDoe@yahoo.com', roleId: 2 },
 
-  invalidTitle: { param: 'title',
-    msg: '10 to 20 characters required'
-  },
+  invalidTitle: { param: 'title', msg: '10 to 150 characters required' },
 
   shortTitle: { param: 'title',
-    msg: '10 to 20 characters required',
-    value: 'history'
-  },
+    msg: '10 to 150 characters required',
+    value: 'history' },
 
   emptyContent: { param: 'content',
     msg: 'Document content cannot be empty'

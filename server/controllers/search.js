@@ -9,14 +9,20 @@ import models from '../models/index';
    * @return {object} object - information about the status of the request
    */
 const searchUser = (request, response) => {
-  const searchTerm = request.query.q;
   models.User.findAll({ attributes: ['id', 'email', 'roleId'],
-    email: { $like: searchTerm },
+    where: {
+      email: { $iLike: `%${request.query.q}%` },
+    },
     order: [['roleId', 'ASC']],
   }).then((users) => {
-    const filteredUsers = users.filter(user =>
-    RegExp(searchTerm, 'gi').test(user.email));
-    response.status(200).json({ users: filteredUsers });
+    if (users.length < 1) {
+      return response.status(404).json({
+        message: 'No user email matching the search term',
+        users,
+        more_info: 'https://dmsys.herokuapp.com/#search-for-users',
+      });
+    }
+    response.status(200).json({ users });
   });
 };
 
@@ -30,12 +36,16 @@ const searchUser = (request, response) => {
    */
 const searchDocument = (request, response) => {
   const query = helper.querySearchDocuments(request);
-  const searchTerm = request.query.q;
   models.Document.findAll(query)
   .then((documents) => {
-    const filteredDocs = documents.filter(document =>
-    RegExp(searchTerm, 'gi').test(document.title));
-    response.status(200).json({ Documents: filteredDocs });
+    if (documents.length < 1) {
+      return response.status(404).json({
+        message: 'No Document title matching the search term',
+        documents,
+        more_info: 'https://dmsys.herokuapp.com/#search-for-documents-based-on-title',
+      });
+    }
+    response.status(200).json({ Documents: documents });
   });
 };
 
