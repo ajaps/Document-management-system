@@ -18,13 +18,15 @@ const verifyToken = (request, response, next) => {
   if (token) {
     jwt.verify(token, SECRET_KEY, (error, decoded) => {
       if (error) {
-        response.status(401).json({ message: 'Invalid token' });
+        return response.status(401).json({ message: 'Invalid token' });
       }
       request.decoded = decoded;
       next();
     });
   } else {
-    response.status(428).json('A token is requeired for authentication');
+    response.status(428).json({
+      message: 'A token is requeired for authentication'
+    });
   }
 };
 

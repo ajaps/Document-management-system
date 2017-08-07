@@ -1,7 +1,7 @@
 import documentRoutes from './document';
-import userRoutes from './user';
-import searchRoutes from './search';
 import roleRoutes from './role';
+import searchRoutes from './search';
+import userRoutes from './user';
 
 const routes = (router) => {
   userRoutes(router);

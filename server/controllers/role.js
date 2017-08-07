@@ -11,13 +11,16 @@ import models from '../models/index';
    */
 const getAllRoles = (request, response) => {
   models.Role.findAndCountAll()
-  .then((roles) => {
-    response.status(200).json({
-      roleCount: roles.count,
-      message: 'roles retrieved successfully',
-      role: roles.rows,
-    });
-  });
+  .then(roles => response.status(200).json({
+    roleCount: roles.count,
+    message: 'roles retrieved successfully',
+    role: roles.rows,
+  })
+  )
+  .catch(error => response.status(500).json({
+    message: 'An unexpected error occurred',
+    error,
+  }));
 };
 
 
@@ -33,17 +36,24 @@ const createRole = (request, response) => {
   if (!isString) {
     return response.status(406).json({
       message: 'roleName must be a string',
+      more_info: 'https://dmsys.herokuapp.com/#create-new-role',
     });
   }
   models.Role.create({
     roleName: request.body.roleName,
   })
-  .then((role) => {
-    response.status(200).json({
-      message: 'new role created successfully',
-      role,
-    });
-  });
+  .then(role => response.status(200).json({
+    message: 'new role created successfully',
+    role,
+  })
+  )
+  .catch(error => response.status(409).json({
+    message: `Cannot create role with specified ID, ensure the roleName
+      doesn't already exist in the database`,
+    error: error.message,
+    more_info: 'https://dmsys.herokuapp.com/#create-new-role',
+  })
+  );
 };
 
 /**
@@ -63,22 +73,22 @@ const updateRole = (request, response) => {
     }
     const roleId = Number(request.params.id);
     if (roleId === request.decoded.data.roleId) {
-      return response.status(400).json({
-        message: 'Admin role cannot be update',
+      return response.status(403).json({
+        message: 'forbidden',
+        more_info: 'https://dmsys.herokuapp.com/#update-role',
       });
     }
     models.Role.update(request.body, { where: { id: roleId } })
-    .then(() => {
-      response.status(200).json({
-        message: 'updated successfully',
-      });
+    .then(() => response.status(200).json({
+      message: 'updated successfully',
     })
-    .catch((error) => {
-      response.status(409).json({
-        message: 'An error occured updating roleName',
-        error: error.errors,
-      });
-    });
+    )
+    .catch(error => response.status(409).json({
+      message: 'An unexpected error occurred',
+      error: error.errors,
+      more_info: 'https://dmsys.herokuapp.com/#update-role',
+    })
+    );
   });
 };
 

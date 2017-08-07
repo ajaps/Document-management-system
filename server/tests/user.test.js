@@ -2,7 +2,7 @@ import chai from 'chai';
 import supertest from 'supertest';
 import authentication from '../middleware/authentication';
 import mockData from '../mockData/mockData';
-import server from '../../dist/server';
+import server from '../../server';
 
 const expect = chai.expect;
 const request = supertest(server);
@@ -64,19 +64,19 @@ describe('When user', () => {
       request.post('/api/v1/users/login')
     .send({ email: 'johnDoe@yahoo.com', password: 'humanity' })
     .end((err, res) => {
-      expect(res.body.message).to.be.equal('Logged in successful');
+      expect(res.body.message).to.be.equal('Logged in successfully');
       expect(res.body.token).to.have.lengthOf.above(20);
       expect(res.statusCode).to.be.equal(202);
       done();
     });
     });
 
-    it(`should return "Invalid username or password" and status 404,
+    it(`should return "Invalid email or password" and status 404,
       when user tries to log in with a wrong password`, (done) => {
       request.post('/api/v1/users/login')
     .send({ email: 'johnDoe@yahoo.com', password: 'loveGoodFood' })
     .end((err, res) => {
-      expect(res.body.message).to.be.equal('Invalid username or password');
+      expect(res.body.message).to.be.equal('Invalid email or password');
       expect((res.body.token)).to.be.a('null');
       expect(res.statusCode).to.be.equal(401);
       done();
@@ -101,7 +101,7 @@ describe('When user', () => {
     .set({ Authorization: regularToken })
     .set('Accept', 'application/json')
     .end((err, res) => {
-      expect(res.body.Total_Users).to.be.equal(5);
+      expect(res.body.totalCount).to.be.equal(5);
       expect(res.body.users).to.eql(mockData.usersInDatabase);
       expect(res.statusCode).to.be.equal(200);
       done();
@@ -122,7 +122,7 @@ describe('When user', () => {
       when token isn't provided`, (done) => {
       request.get('/api/v1/users')
     .end((err, res) => {
-      expect(res.body).to.be.equal(mockData.noToken);
+      expect(res.body).to.be.eql(mockData.noToken);
       expect((res.body.token)).to.be.a('undefined');
       expect(res.statusCode).to.be.equal(428);
       done();
@@ -149,6 +149,17 @@ describe('When user', () => {
     .end((err, res) => {
       expect(res.body.user).to.be.an('array');
       expect(res.statusCode).to.be.equal(200);
+      done();
+    });
+    });
+
+    it('should return a JSON object message: userId not found', (done) => {
+      request.get('/api/v1/users/100')
+      .set('Accept', 'application/json')
+    .set({ Authorization: regularToken })
+    .end((err, res) => {
+      expect(res.body.message).to.be.equal('userId not found');
+      expect(res.statusCode).to.be.equal(404);
       done();
     });
     });
@@ -183,7 +194,7 @@ describe('When user', () => {
       done();
     });
     });
-    it(`should return a status code 200, when the user deletes own record or 
+    it(`should return a status code 200, when the user deletes own record or
       user has admin rights to delete any record`, (done) => {
       request.delete('/api/v1/users/5')
     .set({ Authorization: regularToken })
@@ -195,7 +206,7 @@ describe('When user', () => {
       done();
     });
     });
-    it(`should return a status code 404, 
+    it(`should return a status code 404,
       when the user deletes a record that does not exist`, (done) => {
       request.delete('/api/v1/users/10')
     .set({ Authorization: adminToken })
