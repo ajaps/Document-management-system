@@ -101,7 +101,7 @@ describe('When user', () => {
     .set({ Authorization: regularToken })
     .set('Accept', 'application/json')
     .end((err, res) => {
-      expect(res.body.Total_Users).to.be.equal(5);
+      expect(res.body.totalCount).to.be.equal(5);
       expect(res.body.users).to.eql(mockData.usersInDatabase);
       expect(res.statusCode).to.be.equal(200);
       done();
@@ -122,7 +122,7 @@ describe('When user', () => {
       when token isn't provided`, (done) => {
       request.get('/api/v1/users')
     .end((err, res) => {
-      expect(res.body).to.be.equal(mockData.noToken);
+      expect(res.body).to.be.eql(mockData.noToken);
       expect((res.body.token)).to.be.a('undefined');
       expect(res.statusCode).to.be.equal(428);
       done();

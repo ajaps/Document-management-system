@@ -1,30 +1,18 @@
+import coveralls from 'gulp-coveralls';
+import exit from 'gulp-exit';
 import gulp from 'gulp';
+import injectModules from 'gulp-inject-modules';
+import istanbul from 'gulp-istanbul';
+import jasmineNode from 'gulp-jasmine-node';
 import loadPlugins from 'gulp-load-plugins';
 import path from 'path';
-import jasmineNode from 'gulp-jasmine-node';
-import istanbul from 'gulp-istanbul';
-import injectModules from 'gulp-inject-modules';
-import exit from 'gulp-exit';
-import coveralls from 'gulp-coveralls';
+
 
 // Load the gulp plugins into the `plugins` variable
 const plugins = loadPlugins();
 
-const jasmineNodeOpts = {
-  timeout: 100000,
-  includeStackTrace: false,
-  color: true
-};
-
-gulp.task('tests', () => {
-  gulp.src('./server/tests/*.js')
-    .pipe(plugins.babel())
-    .pipe(jasmineNode(jasmineNodeOpts))
-    .pipe(exit());
-});
-
 const sourcePaths = {
-  js: ['./**/*.js', '!dist/**', '!node_modules/**', '!coverage/**']
+  js: ['./**/*.js', '!dist/**', '!node_modules/**', '!coverage/**', '!Documentation/**']
 };
 
 // Compile all Babel Javascript into ES5 and place in dist folder
@@ -34,6 +22,7 @@ gulp.task('babel', () =>
     .pipe(gulp.dest('dist'))
 );
 
+// Run test and generate coverage
 gulp.task('coverage', (cb) => {
   gulp.src('dist/server/**/*.js')
     .pipe(istanbul())
@@ -64,6 +53,5 @@ gulp.task('nodemon', ['babel'], () =>
 );
 
 gulp.task('test', ['coverage']);
-// gulp.task('test', ['coverage']);
 gulp.task('default', ['nodemon']);
 gulp.task('production', ['babel']);

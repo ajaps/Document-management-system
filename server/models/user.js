@@ -1,3 +1,6 @@
+import bcrypt from 'bcrypt';
+// const SALT_ROUNDS = Number(process.env.SALT_ROUNDS);
+const saltRounds = 10;
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
     email: {
@@ -17,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
     },
   });
+  //relationship declaration
   User.associate = (models) => {
     User.belongsTo(models.Role, {
       foreignKey: 'roleId',
@@ -29,5 +33,10 @@ module.exports = (sequelize, DataTypes) => {
       as: 'documents',
     });
   };
+
+  //Hooks
+  User.afterValidate((user) =>
+    user.password = bcrypt.hashSync(user.password, saltRounds)
+  );
   return User;
 };

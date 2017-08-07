@@ -24,7 +24,9 @@ const verifyToken = (request, response, next) => {
       next();
     });
   } else {
-    response.status(428).json('A token is requeired for authentication');
+    response.status(428).json({
+      message: 'A token is requeired for authentication'
+    });
   }
 };
 

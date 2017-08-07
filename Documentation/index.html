@@ -277,6 +277,9 @@
                     <a href="#update-document" class="toc-h2 toc-link" data-title="Documents">Update document</a>
                   </li>
                   <li>
+                    <a href="#get-documents-by-id" class="toc-h2 toc-link" data-title="Documents">Get Documents by ID</a>
+                  </li>
+                  <li>
                     <a href="#get-documents-by-userid" class="toc-h2 toc-link" data-title="Documents">Get Documents by UserId</a>
                   </li>
                   <li>
@@ -381,6 +384,10 @@ You must replace <code>token</code> with your personal token.
 <p>This endpoint retrieves all available roles.</p>
 <h3 id='http-request'>HTTP Request</h3>
 <p><code>GET /api/v1/roles</code></p>
+
+<p>Status: <code>200: Ok - retrieved successfully</code></p>
+
+<p>Status: <code>500: Internal Server Error - The request could not be processed at the moment, try again later</code></p>
 <h3 id='query-parameters'>Query Parameters</h3>
 <table><thead>
 <tr>
@@ -650,6 +657,8 @@ Remember — The email must be valid and password length should be 8 or more!
 <p>Status: <code>404: not found - the ID does not match any in the database</code></p>
 
 <p>Status: <code>412: pre-condition failed - ID must be a number</code></p>
+
+<p>Status: <code>500: Internal Server Error - The request could not be processed at the moment, try again later</code></p>
 <h3 id='url-parameters-5'>URL Parameters</h3>
 <table><thead>
 <tr>
@@ -742,6 +751,8 @@ Remember — A user can only updates his/her record(except the roleId), while an
 <p>Status: <code>401: Unauthorized - The specified userId does not belong to you</code></p>
 
 <p>Status: <code>404: Bad request - The UserId does not exist</code></p>
+
+<p>Status: <code>500: Internal Server Error - The request could not be processed at the moment, try again later</code></p>
 <h3 id='url-parameters-7'>URL Parameters</h3>
 <table><thead>
 <tr>
@@ -800,6 +811,8 @@ Remember — An Admin can delete any user from the database while a user can onl
 <p>Status: <code>200: Ok - The query matches user(s) in the database</code></p>
 
 <p>Status: <code>404: Not found - the query did not match any user in the database</code></p>
+
+<p>Status: <code>500: Internal Server Error - The request could not be processed at the moment, try again later</code></p>
 <h3 id='url-parameters-8'>URL Parameters</h3>
 <table><thead>
 <tr>
@@ -862,6 +875,8 @@ Remember — The query is executed on the user's email!
 <p>Status: <code>200: ok</code></p>
 
 <p>Status: <code>404: not found - The user does not have required access right to view available documents</code></p>
+
+<p>Status: <code>500: Internal Server Error - The request could not be processed at the moment, try again later</code></p>
 
 <aside class="success">
 Remember — The user can only view documents he has access to (same role, public documents and documents created by the user!
@@ -938,7 +953,7 @@ Remember — access by default is set to - public!
 
 <p>Status: <code>400: Bad request - An error was encoutered while updating document, ensure Access is one of public, private or role. Default:public</code></p>
 
-<p>Status: <code>401: Unauthorized - You do not have access to view available documents</code></p>
+<p>Status: <code>401: Unauthorized - You do not have access to view available documents or there is no Document with the specified ID in the database</code></p>
 
 <p>Status: <code>412: precondition failed - id must be a number</code></p>
 <h3 id='url-parameters-10'>URL Parameters</h3>
@@ -965,6 +980,53 @@ Remember — access by default is set to - public!
 <aside class="success">
 Remember — The 'access' can be any of public, private or role!
 </aside>
+<h2 id='get-documents-by-id'>Get Documents by ID</h2>
+<blockquote>
+<p>Response:</p>
+</blockquote>
+<pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+    </span><span class="s2">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"retrieved successfully"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"document"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Introduction to 101"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"content"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The definition of computer is"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"public"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"userId"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"roleId"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"createdAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-08-06T14:19:07.526Z"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"updatedAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-08-06T14:19:07.526Z"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+<p>This endpoint retrieves documents by Id.</p>
+<h3 id='http-request-14'>HTTP Request</h3>
+<p><code>GET /api/v1/documents/&lt;id&gt;</code></p>
+<h3 id='http-response-13'>HTTP response</h3>
+<p>Status: <code>200: Ok - successfully retrieves document</code></p>
+
+<p>Status: <code>401: Not Found - Could not find any document with the specified ID, or you do not have permission to view the document(Private Doc or Document not on same role as user)</code></p>
+
+<p>Status: <code>412: pre-condition failed - ID must be a number</code></p>
+
+<p>Status: <code>500: Internal Server Error - The request could not be processed at the moment, try again later</code></p>
+<h3 id='url-parameters-11'>URL Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>id</td>
+<td>The ID of the Document</td>
+</tr>
+</tbody></table>
+
+<aside class="success">
+Remember — The endpoint will only retrieve the document where the user has access right to view the document!
+</aside>
 <h2 id='get-documents-by-userid'>Get Documents by UserId</h2>
 <blockquote>
 <p>Response:</p>
@@ -986,15 +1048,17 @@ Remember — The 'access' can be any of public, private or role!
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 <p>This endpoint finds documents that matches the userID.</p>
-<h3 id='http-request-14'>HTTP Request</h3>
-<p><code>GET /api/v1/documents/users/&lt;id&gt;</code></p>
-<h3 id='http-response-13'>HTTP response</h3>
+<h3 id='http-request-15'>HTTP Request</h3>
+<p><code>GET /api/v1/users/&lt;id&gt;/documents</code></p>
+<h3 id='http-response-14'>HTTP response</h3>
 <p>Status: <code>200: Ok - retrieves all documents by UserId</code></p>
 
 <p>Status: <code>404: Not Found - Could not find any document with the specified userId, The userId does not exist or you do not have permission to view the document</code></p>
 
 <p>Status: <code>412: pre-condition failed - ID must be a number</code></p>
-<h3 id='url-parameters-11'>URL Parameters</h3>
+
+<p>Status: <code>500: Internal Server Error - The request could not be processed at the moment, try again later</code></p>
+<h3 id='url-parameters-12'>URL Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -1032,9 +1096,9 @@ Remember — The endpoint will only retrieve documents where the user has access
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 <p>This endpoint finds documents that matches the userID.</p>
-<h3 id='http-request-15'>HTTP Request</h3>
-<p><code>GET /api/v1/documents/roles/&lt;id&gt;</code></p>
-<h3 id='http-response-14'>HTTP response</h3>
+<h3 id='http-request-16'>HTTP Request</h3>
+<p><code>GET /api/v1/roles/&lt;id&gt;/documents</code></p>
+<h3 id='http-response-15'>HTTP response</h3>
 <p>Status: <code>200: ok - retrieves all documents by roleId</code></p>
 
 <p>Status: <code>404: Not Found - Could not find any document with the specified roleId</code></p>
@@ -1042,7 +1106,9 @@ Remember — The endpoint will only retrieve documents where the user has access
 <p>Status: <code>401: Unauthorized - You need access rights to view documents in this role</code></p>
 
 <p>Status: <code>412: pre-condition failed - ID must be a number</code></p>
-<h3 id='url-parameters-12'>URL Parameters</h3>
+
+<p>Status: <code>500: Internal Server Error - The request could not be processed at the moment, try again later</code></p>
+<h3 id='url-parameters-13'>URL Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -1070,15 +1136,17 @@ Remember — You can only retrieve documents with same role as the user(requeste
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 <p>This endpoint deletes secified document.</p>
-<h3 id='http-request-16'>HTTP Request</h3>
+<h3 id='http-request-17'>HTTP Request</h3>
 <p><code>DELETE /api/v1/documents/&lt;id&gt;</code></p>
-<h3 id='http-response-15'>HTTP response</h3>
+<h3 id='http-response-16'>HTTP response</h3>
 <p>Status: <code>200: ok - Deleted</code></p>
 
 <p>Status: <code>401: unauthorized - The specified document does not belong to you</code></p>
 
 <p>Status: <code>412: pre condition failed - The document ID must be a number</code></p>
-<h3 id='url-parameters-13'>URL Parameters</h3>
+
+<p>Status: <code>500: Internal Server Error - The request could not be processed at the moment, try again later</code></p>
+<h3 id='url-parameters-14'>URL Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>
@@ -1129,13 +1197,15 @@ Remember — An Admin can delete any document from the database while a user can
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 <p>This endpoint searches for documents title that matches the query.</p>
-<h3 id='http-request-17'>HTTP Request</h3>
+<h3 id='http-request-18'>HTTP Request</h3>
 <p><code>GET /api/v1/search/documents/?q={doctitle}</code></p>
-<h3 id='http-response-16'>HTTP response</h3>
+<h3 id='http-response-17'>HTTP response</h3>
 <p>Status: <code>200: Ok - Documents retrieved successfully</code></p>
 
 <p>Status: <code>404: not found - the query did not match any document in the database</code></p>
-<h3 id='url-parameters-14'>URL Parameters</h3>
+
+<p>Status: <code>500: Internal Server Error - The request could not be processed at the moment, try again later</code></p>
+<h3 id='url-parameters-15'>URL Parameters</h3>
 <table><thead>
 <tr>
 <th>Parameter</th>

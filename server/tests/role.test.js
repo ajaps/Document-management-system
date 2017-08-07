@@ -1,8 +1,9 @@
 import chai from 'chai';
 import supertest from 'supertest';
+import authentication from '../middleware/authentication';
 import mockData from '../mockData/mockData';
 import server from '../../server';
-import authentication from '../middleware/authentication';
+
 
 const expect = chai.expect;
 const request = supertest(server);

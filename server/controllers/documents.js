@@ -1,5 +1,5 @@
-import models from '../models/index';
 import helper from '../helpers/helper';
+import models from '../models/index';
 
 /**
    * Creates a new instance of document in the database
@@ -27,14 +27,13 @@ const createDocument = (request, response) => {
       roleId: request.decoded.data.roleId,
     })
     .then(document => response.status(201).json({
-      message: 'New Document created successfully',
+      message: 'Document created',
       title: document.title,
       ownerId: request.decoded.data.userId,
     })
     )
     .catch(error => response.status(409).json({
-      message: `An error occured creating new document,
-          ensure access is public, private or role`,
+      message: 'An unexpected error occurred',
       error: error.errors,
       more_info: 'https://dmsys.herokuapp.com/#creates-new-documents'
     })
@@ -55,22 +54,26 @@ const getAllDocument = (request, response) => {
   const query = helper.queryForAllDocuments(request);
   models.Document.findAndCountAll(query)
   .then((documents) => {
-    if (documents.length < 1) {
+    if (documents.count < 1) {
       return response.status(404).json({
-        message: 'You do not have access to view available documents',
+        message: 'Access Denied',
         documents,
         more_info: 'https://dmsys.herokuapp.com/#creates-new-documents',
       });
     }
     response.status(200).json({
       message: 'successful',
-      page: query.offset,
+      page: Math.floor(query.offset / query.limit) + 1,
       pageCount: Math.ceil(documents.count / query.limit),
       pageSize: query.limit,
       totalCount: documents.count,
       document: documents.rows,
     });
-  });
+  })
+  .catch(error => response.status(500).json({
+    message: 'An unexpected error occurred',
+    error,
+  }));
 };
 
 
@@ -82,38 +85,72 @@ const getAllDocument = (request, response) => {
    * @return {object} object - information about the document updated
    */
 const updateDocument = (request, response) => {
+  const validatDoc = helper.verifyDocUpdateParams(request);
+  if (validatDoc) {
+    return response.status(412).json({
+      message: validatDoc,
+      more_info: 'https://dmsys.herokuapp.com/#update-document',
+    });
+  }
+  const query = helper.queryUpdateDeleteDoc(request);
+  models.Document.update(request.body, query)
+  .then((document) => {
+    if (document[0] !== 0) {
+      return response.status(200).json({
+        message: 'updated successfully',
+      });
+    }
+    return response.status(401).json({
+      message: 'Access Denied',
+      more_info: 'https://dmsys.herokuapp.com/#update-document',
+    });
+  })
+  .catch((error) => {
+    response.status(400).json({
+      message: 'An unexpected error occured',
+      error: error.parent.detail,
+      more_info: 'https://dmsys.herokuapp.com/#update-document',
+    });
+  });
+};
+
+/**
+   * deletes the document located at the specified ID
+   * @function documentById
+   * @param {object} request request
+   * @param {object} response response
+   * @return {object} object - information about the deleted document
+   */
+const documentById = (request, response) => {
   helper.verifyIsInt(request)
   .then((result) => {
     const verifiedParams = result.mapped();
     const noErrors = result.isEmpty();
     if (!noErrors) {
-      return response.status(412).json({
-        message: verifiedParams,
-        more_info: 'https://dmsys.herokuapp.com/#update-document',
-      });
+      return response.status(412).json({ message: verifiedParams });
     }
-    const query = helper.queryUpdateDeleteDoc(request);
-    models.Document.update(request.body, query)
+    const query = helper.queryDocbyId(request);
+    models.Document.findAll(query)
     .then((document) => {
-      if (document[0] !== 0) {
+      if (document.length !== 0) {
         return response.status(200).json({
-          message: 'updated successfully',
+          message: 'retrieved successfully',
+          document
         });
       }
-      return response.status(401).json({
-        message: 'You do not have access to view/update the available document',
-        more_info: 'https://dmsys.herokuapp.com/#update-document',
+      response.status(401).json({
+        message: 'Access Denied',
+        document,
+        more_info: 'https://dmsys.herokuapp.com/#get-documents-by-id',
       });
     })
-    .catch((error) => {
-      response.status(400).json({
-        message: 'An unexpected error occured while updating document',
-        error: error.parent.detail,
-        more_info: 'https://dmsys.herokuapp.com/#update-document',
-      });
-    });
+    .catch(error => response.status(500).json({
+      message: 'An unexpected error occurred',
+      error,
+    }));
   });
 };
+
 
 /**
    * deletes the document located at the specified ID
@@ -140,11 +177,15 @@ const deleteDocument = (request, response) => {
         });
       }
       response.status(401).json({
-        message: 'You do not have access to view/delete the available documents',
+        message: 'Access Denied',
         document,
         more_info: 'https://dmsys.herokuapp.com/#delete-documents',
       });
-    });
+    })
+    .catch(error => response.status(500).json({
+      message: 'An unexpected error occurred',
+      error,
+    }));
   });
 };
 
@@ -166,12 +207,13 @@ const getDocumentByUserId = (request, response) => {
         more_info: 'https://dmsys.herokuapp.com/#get-documents-by-userid',
       });
     }
-    const query = helper.queryFindDocById(request);
+    const query = helper.queryFindDocByUserId(request);
     models.Document.findAll(query)
     .then((documents) => {
       if (documents.length < 1) {
         return response.status(404).json({
-          message: 'No Document matching the User Id',
+          message: `UserId does not exist or you do not have access
+            to view available document(s)`,
           documents,
           more_info: 'https://dmsys.herokuapp.com/#get-documents-by-userid',
         });
@@ -180,7 +222,11 @@ const getDocumentByUserId = (request, response) => {
         message: 'retrieved successfully',
         documents
       });
-    });
+    })
+    .catch(error => response.status(500).json({
+      message: 'An unexpected error occurred',
+      error,
+    }));
   });
 };
 
@@ -206,15 +252,15 @@ const getDocumentByRole = (request, response) => {
     const query = helper.queryDocumentsByRole(request);
     if (query === false) {
       return response.status(401).json({
-        message: 'You need permission to view documents under this role',
+        message: 'Access Denied',
         more_info: 'https://dmsys.herokuapp.com/#get-documents-by-roleid',
       });
     }
     models.Document.findAndCountAll(query)
     .then((documents) => {
-      if (documents.length < 1) {
+      if (documents.count < 1) {
         return response.status(404).json({
-          message: 'No Document matching the role Id',
+          message: 'You require access to view this Doc or the ID does not exist',
           documents,
           more_info: 'https://dmsys.herokuapp.com/#get-documents-by-roleid',
         });
@@ -224,7 +270,11 @@ const getDocumentByRole = (request, response) => {
         message: 'retrieved successfully',
         document: documents.rows,
       });
-    });
+    })
+    .catch(error => response.status(500).json({
+      message: 'An unexpected error occurred',
+      error,
+    }));
   });
 };
 
@@ -232,6 +282,7 @@ module.exports = {
   createDocument,
   getAllDocument,
   updateDocument,
+  documentById,
   deleteDocument,
   getDocumentByUserId,
   getDocumentByRole,

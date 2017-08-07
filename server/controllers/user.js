@@ -1,9 +1,8 @@
 import bcrypt from 'bcrypt';
-import models from '../models/index';
-import helper from '../helpers/helper';
 import authentication from '../middleware/authentication';
+import helper from '../helpers/helper';
+import models from '../models/index';
 
-const saltRounds = 10;
 
 /**
    * Creates new user
@@ -25,10 +24,9 @@ const createUser = (request, response) => {
     }
     const password = request.body.password;
     const email = request.body.email;
-    const hashPassword = bcrypt.hashSync(password, saltRounds);
     models.User.create({
       email,
-      password: hashPassword,
+      password,
     })
     .then((user) => {
       user.roleId = 2;
@@ -39,10 +37,11 @@ const createUser = (request, response) => {
       };
       return response.status(201).json(data);
     })
-    .catch(() => {
+    .catch((error) => {
       const data = {
         message: `${email} already exist`,
         token: null,
+        error: error.errors,
         more_info: 'https://dmsys.herokuapp.com/#creates-new-user',
       };
       return response.status(409).json(data);
@@ -96,9 +95,9 @@ const loginUser = (request, response) => {
           more_info: 'https://dmsys.herokuapp.com/#login-user',
         });
     })
-    .catch(() => response.status(404).json(
+    .catch(error => response.status(404).json(
       { message: `${email} does not exist in the database`,
-        token: null,
+        error,
         more_info: 'https://dmsys.herokuapp.com/#login-user',
       })
     );
@@ -114,16 +113,20 @@ const loginUser = (request, response) => {
    * @return {object} object - information about the status of the request
    */
 const allUser = (request, response) => {
-  const paginate = helper.paginate(request);
-  models.User.findAndCountAll({ attributes: ['id', 'email', 'roleId'],
-    order: [['roleId', 'ASC']],
-    offset: paginate[0],
-    limit: paginate[1],
-  }).then(user =>
-  response.status(200).json({ Total_Users: user.count, users: user.rows })
+  const query = helper.queryForAllUsers(request);
+  models.User.findAndCountAll(query).then(users =>
+  response.status(200).json({
+    message: 'successful',
+    page: Math.floor(query.offset / query.limit) + 1,
+    pageCount: Math.ceil(users.count / query.limit),
+    pageSize: query.limit,
+    totalCount: users.count,
+    users: users.rows,
+  })
   )
-  .catch(() => response.status(500).json(
+  .catch((error) => response.status(500).json(
     {
+      error,
       message: 'An unexpected error occured, try agian later',
       more_info: 'https://dmsys.herokuapp.com/#find-matching-instances-of-user',
     })
@@ -159,7 +162,11 @@ const findUser = (request, response) => {
         });
       }
       return response.status(200).json({ user });
-    });
+    })
+    .catch(error => response.status(500).json({
+      message: 'An unexpected error occurred',
+      error,
+    }));
   });
 };
 
@@ -194,9 +201,6 @@ const updateUser = (request, response) => {
     }
     if (!isAdmin) {
       delete request.body.roleId;
-    }
-    if (request.body.password !== undefined) {
-      request.body.password = bcrypt.hashSync(request.body.password, saltRounds);
     }
     delete request.body.id;
     models.User.update(request.body, {
@@ -251,7 +255,11 @@ const deleteUser = (request, response) => {
     return response.status(200).json({
       message: 'User deleted successfully',
       user });
-  });
+  })
+  .catch(error => response.status(500).json({
+    message: 'An unexpected error occurred',
+    error,
+  }));
 };
 
 module.exports = {

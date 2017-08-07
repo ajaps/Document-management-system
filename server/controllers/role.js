@@ -16,7 +16,11 @@ const getAllRoles = (request, response) => {
     message: 'roles retrieved successfully',
     role: roles.rows,
   })
-  );
+  )
+  .catch(error => response.status(500).json({
+    message: 'An unexpected error occurred',
+    error,
+  }));
 };
 
 
