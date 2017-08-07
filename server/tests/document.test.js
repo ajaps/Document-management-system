@@ -1,8 +1,9 @@
 import chai from 'chai';
 import supertest from 'supertest';
+import authentication from '../middleware/authentication';
 import mockData from '../mockData/mockData';
 import server from '../../server';
-import authentication from '../middleware/authentication';
+
 
 const expect = chai.expect;
 const request = supertest(server);
@@ -61,6 +62,19 @@ describe('When user', () => {
         done();
       });
     });
+
+    it(`should return a status code 409, when document access
+      is anything other than public, private, role or null`, (done) => {
+      request.post('/api/v1/documents')
+      .set('Accept', 'application/json')
+      .set({ Authorization: regularToken })
+      .send(mockData.invalidAccessType)
+      .end((err, res) => {
+        expect(res.body).to.eql(mockData.invalidAccessResult);
+        expect(res.statusCode).to.be.equal(409);
+        done();
+      });
+    });
   });
 
   describe('get instances of document', () => {
@@ -77,7 +91,23 @@ describe('When user', () => {
       });
     });
   });
-  describe('get updates a document', () => {
+
+  describe('finds document by ID', () => {
+    it(`should return a status code 200,
+      and a JSON stating if the document retrieved`, (done) => {
+      request.get('/api/v1/documents/3')
+      .set('Accept', 'application/json')
+      .set({ Authorization: adminToken })
+      .end((err, res) => {
+        expect(res.body.message).to.be.equal('retrieved successfully');
+        expect(res.body.document[0].id).to.be.equal(3);
+        expect(res.statusCode).to.be.equal(200);
+        done();
+      });
+    });
+  });
+
+  describe('updates a document', () => {
     it(`should return a status code 200,
       and a JSON stating if the document updated`, (done) => {
       request.put('/api/v1/documents/3')
@@ -91,6 +121,45 @@ describe('When user', () => {
       });
     });
 
+      it(`should return a status code 412 and a corresponding JSON object,
+      if the document title is less than 10 characters`, (done) => {
+      request.put('/api/v1/documents/3')
+      .set('Accept', 'application/json')
+      .send({ title: 'Food' })
+      .set({ Authorization: adminToken })
+      .end((err, res) => {
+        expect(res.body.message.title).to.be.eql(mockData.invalidTitleLength);
+        expect(res.statusCode).to.be.equal(412);
+        done();
+      });
+    });
+
+    it(`should return a status code 412 and a corresponding JSON object,
+      if the document access specified is invalid(e.g. protected)`, (done) => {
+      request.put('/api/v1/documents/3')
+      .set('Accept', 'application/json')
+      .send({ access: 'protected' })
+      .set({ Authorization: adminToken })
+      .end((err, res) => {
+        expect(res.body.message.access).to.be.eql(mockData.invalidAccess);
+        expect(res.statusCode).to.be.equal(412);
+        done();
+      });
+    });
+
+    it(`should return a status code 412 and a corresponding JSON object,
+      if the document ID specified is invalid(i.e not a number)`, (done) => {
+      request.put('/api/v1/documents/frank')
+      .set('Accept', 'application/json')
+      .send({ access: 'protected' })
+      .set({ Authorization: adminToken })
+      .end((err, res) => {
+        expect(res.body.message.id).to.be.eql(mockData.invalidId);
+        expect(res.statusCode).to.be.equal(412);
+        done();
+      });
+    });
+
     it(`should return a status code 400,
       and a JSON object stating the doc couldn't be updated`, (done) => {
       request.put('/api/v1/documents/3')
@@ -100,7 +169,22 @@ describe('When user', () => {
       .set({ Authorization: adminToken })
       .end((err, res) => {
         expect(res.body.message).to
-        .be.equal('An unexpected error occured while updating document');
+        .be.equal('An unexpected error occured');
+        expect(res.statusCode).to.be.equal(400);
+        done();
+      });
+    });
+
+    it(`should return a status code 412,
+      and a corresponding JSON object when the `, (done) => {
+      request.put('/api/v1/documents/3')
+      .set('Accept', 'application/json')
+      .send({ content: 'In the beginning, God created heaven and earth',
+        roleId: 8 })
+      .set({ Authorization: adminToken })
+      .end((err, res) => {
+        expect(res.body.message).to
+        .be.equal('An unexpected error occured');
         expect(res.statusCode).to.be.equal(400);
         done();
       });
@@ -125,7 +209,7 @@ describe('When user', () => {
       .set({ Authorization: regularToken })
       .end((err, res) => {
         expect(res.body.message).to.be
-        .equal('You do not have access to view/delete the available documents');
+        .equal('Access Denied');
         expect(res.statusCode).to.be.equal(401);
         done();
       });
@@ -133,8 +217,8 @@ describe('When user', () => {
   });
   describe('finds documents by userID', () => {
     it(`should return a status code 200 and a JSON showing the document
-      was deleted if an admin deletes a document`, (done) => {
-      request.get('/api/v1/documents/users/2')
+      retrieved successfully`, (done) => {
+      request.get('/api/v1/users/1/documents')
       .set('Accept', 'application/json')
       .set({ Authorization: adminToken })
       .end((err, res) => {
@@ -147,7 +231,7 @@ describe('When user', () => {
   describe('finds documents by roleID', () => {
     it(`should return a status code 200 and a JSON showing the document
     retrieved if the user has the same roleId or the user is Admin`, (done) => {
-      request.get('/api/v1/documents/roles/2')
+      request.get('/api/v1/roles/2/documents')
       .set('Accept', 'application/json')
       .set({ Authorization: adminToken })
       .end((err, res) => {
@@ -158,13 +242,13 @@ describe('When user', () => {
     });
     it(`should return a status code 401 and a message, informing the user he
       does not have access to view documents under this role`, (done) => {
-      request.get('/api/v1/documents/roles/1')
+      request.get('/api/v1/roles/4/documents')
       .set('Accept', 'application/json')
       .set({ Authorization: regularToken })
       .end((err, res) => {
         expect(res.body.message).to.be
-        .equal('You need permission to view documents under this role');
-        expect(res.statusCode).to.be.equal(401);
+        .equal('You require access to view this Doc or the ID does not exist');
+        expect(res.statusCode).to.be.equal(404);
         done();
       });
     });

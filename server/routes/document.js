@@ -1,15 +1,17 @@
-import authentication from '../middleware/authentication';
+import { verifyToken } from '../middleware/authentication';
 import { createDocument, getAllDocument, updateDocument, getDocumentByUserId,
-    getDocumentByRole, deleteDocument } from '../controllers/documents';
+    getDocumentByRole, deleteDocument,
+    documentById } from '../controllers/documents';
 
 const Routes = (apiRoutes) => {
   apiRoutes
-  .post('/documents', authentication.verifyToken, createDocument)
-  .get('/documents', authentication.verifyToken, getAllDocument)
-  .put('/documents/:id', authentication.verifyToken, updateDocument)
-  .delete('/documents/:id', authentication.verifyToken, deleteDocument)
-  .get('/documents/users/:id', authentication.verifyToken, getDocumentByUserId)
-  .get('/documents/roles/:id', authentication.verifyToken, getDocumentByRole);
+  .post('/documents', verifyToken, createDocument)
+  .get('/documents', verifyToken, getAllDocument)
+  .get('/documents/:id', verifyToken, documentById)
+  .put('/documents/:id', verifyToken, updateDocument)
+  .delete('/documents/:id', verifyToken, deleteDocument)
+  .get('/users/:id/documents', verifyToken, getDocumentByUserId)
+  .get('/roles/:id/documents', verifyToken, getDocumentByRole);
 };
 
 export default Routes;

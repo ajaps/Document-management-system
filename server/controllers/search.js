@@ -23,7 +23,11 @@ const searchUser = (request, response) => {
       });
     }
     response.status(200).json({ users });
-  });
+  })
+  .catch(error => response.status(500).json({
+    message: 'An unexpected error occurred',
+    error,
+  }));
 };
 
 
@@ -46,7 +50,11 @@ const searchDocument = (request, response) => {
       });
     }
     response.status(200).json({ Documents: documents });
-  });
+  })
+  .catch(error => response.status(500).json({
+    message: 'An unexpected error occurred',
+    error,
+  }));
 };
 
 module.exports = {

@@ -13,7 +13,7 @@ const mockData = {
      { id: 5, email: 'johnDoe@yahoo.com', roleId: 2 },
      { id: 3, email: 'framky007@yahoo.com', roleId: 3 }],
 
-  noToken: 'A token is requeired for authentication',
+  noToken: { message: 'A token is requeired for authentication' },
 
   invalidToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiZnJhbWt5Q',
 
@@ -26,18 +26,14 @@ const mockData = {
     msg: '10 to 150 characters required',
     value: 'history' },
 
-  emptyContent: { param: 'content',
-    msg: 'Document content cannot be empty'
-  },
+  emptyContent: { param: 'content', msg: 'Document content cannot be empty' },
 
   newDoc: { title: 'history 211',
     content: 'This is the beginning of history class',
     access: 'public'
   },
-  createdDoc: { message: 'New Document created successfully',
-    title: 'history 211',
-    ownerId: 2
-  },
+  createdDoc: { message: 'Document created', title: 'history 211', ownerId: 2 },
+
   foundUser: { userID: 1, roleId: 1, email: 'ajaps@yahoo.com' },
   allDocuments: [
     { id: 6,
@@ -92,6 +88,29 @@ const mockData = {
     updatedAt: '2017-07-31T13:34:15.303Z' }],
 
   foundUsers: { id: 1, email: 'ajaps@yahoo.com', roleId: 1 },
+
+  invalidAccessType: {
+    title: 'history 311',
+    content: 'In 1970, before the war broke out; There were rumours',
+    access: 'protected'
+  },
+
+  invalidAccess : { param: 'access',
+        msg: 'Access type must be public, private or role',
+        value: 'protected' },
+
+  invalidTitleLength : { param: 'title',
+        msg: '10 to 150 characters required',
+        value: 'Food' },
+
+  invalidId: {
+        param: 'id',
+        msg: 'ID must be a number',
+        value: 'frank',
+      },
+
+  invalidAccessResult: { message: 'An unexpected error occurred',
+    more_info: 'https://dmsys.herokuapp.com/#creates-new-documents' }
 };
 
 
