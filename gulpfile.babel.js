@@ -30,7 +30,6 @@ gulp.task('coverage', (cb) => {
     .on('finish', () => {
       gulp.src('dist/server/tests/*.js')
       .pipe(plugins.babel())
-      .pipe(injectModules())
       .pipe(jasmineNode())
       .pipe(istanbul.writeReports())
       .pipe(istanbul.enforceThresholds({ thresholds: { global: 30 } }))

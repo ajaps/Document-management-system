@@ -209,7 +209,7 @@ describe('When user', () => {
       .set({ Authorization: regularToken })
       .end((err, res) => {
         expect(res.body.message).to.be
-        .equal('Access Denied');
+        .equal('You require access to delete this Doc or the ID does not exist');
         expect(res.statusCode).to.be.equal(401);
         done();
       });

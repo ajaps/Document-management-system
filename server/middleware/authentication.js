@@ -5,6 +5,7 @@ dotenv.config();
 const SECRET_KEY = process.env.SECRET;
 
 const setUserToken = (user) => {
+  delete user.email;
   const userToken = jwt.sign({
     data: user }, SECRET_KEY, { expiresIn: '12h' },
   );

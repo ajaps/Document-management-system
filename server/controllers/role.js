@@ -74,7 +74,7 @@ const updateRole = (request, response) => {
     const roleId = Number(request.params.id);
     if (roleId === request.decoded.data.roleId) {
       return response.status(403).json({
-        message: 'forbidden',
+        message: 'This action is forbidden',
         more_info: 'https://dmsys.herokuapp.com/#update-role',
       });
     }

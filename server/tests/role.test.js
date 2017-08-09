@@ -79,7 +79,7 @@ describe('When user', () => {
       .set({ Authorization: adminToken })
       .send({ roleName: 'student' })
       .end((err, res) => {
-        expect(res.body.message).to.be.equal('forbidden');
+        expect(res.body.message).to.be.equal('This action is forbidden');
         expect(res.statusCode).to.be.equal(403);
         done();
       });

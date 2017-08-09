@@ -168,7 +168,11 @@ const querySearchDocuments = (request) => {
       title: { $iLike: `%${request.query.q}%` },
       $or: [
         { userId: request.decoded.data.userId },
-        { access: 'public' }
+        { access: 'public' },
+        { $and: [
+          { roleId: request.decoded.data.roleId },
+          { access: 'role' },
+      ] }
       ]
     }
   };

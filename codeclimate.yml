@@ -1,3 +1,5 @@
+exclude_paths:
+- "server/tests/*"
 engines:
   # ... CONFIG CONTENT ...
   eslint:
