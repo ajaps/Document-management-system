@@ -24,7 +24,9 @@ const createUser = (request, response) => {
     }
     const password = request.body.password;
     const email = request.body.email;
+    const username = request.body.username;
     models.User.create({
+      username,
       email,
       password,
     })
@@ -57,7 +59,7 @@ const createUser = (request, response) => {
    * @return {object} object - information about the status of the request
    */
 const loginUser = (request, response) => {
-  helper.verifyUserParams(request)
+  helper.verifyLoginParams(request)
   .then((result) => {
     const verifiedParams = result.mapped();
     const noErrors = result.isEmpty();
@@ -68,7 +70,7 @@ const loginUser = (request, response) => {
       });
     }
     const plainTextpassword = request.body.password;
-    const email = request.body.email;
+    const email = (request.body.email).toLowerCase();
     let validUser = false;
     models.User.find({
       where: {
@@ -216,7 +218,7 @@ const updateUser = (request, response) => {
     )
     .catch(error => response.status(409).json({
       message: `Could not update user details,
-          verify the ID is valid and the roleId exist`,
+          verify the userId is valid or the roleId exist`,
       error: error.errors,
       more_info: 'https://dmsys.herokuapp.com/#update-user',
     })

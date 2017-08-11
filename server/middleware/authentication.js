@@ -5,6 +5,7 @@ dotenv.config();
 const SECRET_KEY = process.env.SECRET;
 
 const setUserToken = (user) => {
+  delete user.email;
   const userToken = jwt.sign({
     data: user }, SECRET_KEY, { expiresIn: '12h' },
   );
@@ -34,7 +35,7 @@ const adminPass = (request, response, next) => {
   const isAdmin = request.decoded.data.roleId === 1;
   if (!isAdmin) {
     return response.status(401).json({
-      message: 'Admin priviledges is required to create new roles',
+      message: 'Admin priviledges is required to perform this action',
     });
   }
   next();

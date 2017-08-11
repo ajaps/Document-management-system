@@ -28,9 +28,8 @@ gulp.task('coverage', (cb) => {
     .pipe(istanbul())
     .pipe(istanbul.hookRequire())
     .on('finish', () => {
-      gulp.src('dist/server/tests/*.js')
+      gulp.src('dist/tests/**/*.js')
       .pipe(plugins.babel())
-      .pipe(injectModules())
       .pipe(jasmineNode())
       .pipe(istanbul.writeReports())
       .pipe(istanbul.enforceThresholds({ thresholds: { global: 30 } }))

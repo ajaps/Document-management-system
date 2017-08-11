@@ -6,16 +6,16 @@ import models from '../models/index';
    * @function createDocument
    * @param {object} request request
    * @param {object} response response
-   * @return {object} object - information about the request
+   * @return {object} object - contains the response gotten from the request
    */
 const createDocument = (request, response) => {
   helper.verifyDocumentParams(request)
   .then((result) => {
-    const verifiedParams = result.mapped();
+    const validationErrors = result.mapped();
     const noErrors = result.isEmpty();
     if (!noErrors) {
       return response.status(412).json({
-        message: verifiedParams,
+        message: validationErrors,
         more_info: 'https://dmsys.herokuapp.com/#creates-new-documents'
       });
     }
@@ -56,7 +56,7 @@ const getAllDocument = (request, response) => {
   .then((documents) => {
     if (documents.count < 1) {
       return response.status(404).json({
-        message: 'Access Denied',
+        message: 'You dont have access to view available document(s)',
         documents,
         more_info: 'https://dmsys.herokuapp.com/#creates-new-documents',
       });
@@ -85,10 +85,10 @@ const getAllDocument = (request, response) => {
    * @return {object} object - information about the document updated
    */
 const updateDocument = (request, response) => {
-  const validatDoc = helper.verifyDocUpdateParams(request);
-  if (validatDoc) {
+  const validateDocumentParams = helper.verifyDocUpdateParams(request);
+  if (validateDocumentParams) {
     return response.status(412).json({
-      message: validatDoc,
+      message: validateDocumentParams,
       more_info: 'https://dmsys.herokuapp.com/#update-document',
     });
   }
@@ -100,8 +100,8 @@ const updateDocument = (request, response) => {
         message: 'updated successfully',
       });
     }
-    return response.status(401).json({
-      message: 'Access Denied',
+    return response.status(404).json({
+      message: 'You require access to view this Doc or the ID does not exist',
       more_info: 'https://dmsys.herokuapp.com/#update-document',
     });
   })
@@ -124,10 +124,10 @@ const updateDocument = (request, response) => {
 const documentById = (request, response) => {
   helper.verifyIsInt(request)
   .then((result) => {
-    const verifiedParams = result.mapped();
+    const validationErrors = result.mapped();
     const noErrors = result.isEmpty();
     if (!noErrors) {
-      return response.status(412).json({ message: verifiedParams });
+      return response.status(412).json({ message: validationErrors });
     }
     const query = helper.queryDocbyId(request);
     models.Document.findAll(query)
@@ -139,7 +139,7 @@ const documentById = (request, response) => {
         });
       }
       response.status(401).json({
-        message: 'Access Denied',
+        message: 'You require access to view this Doc or the ID does not exist',
         document,
         more_info: 'https://dmsys.herokuapp.com/#get-documents-by-id',
       });
@@ -162,10 +162,10 @@ const documentById = (request, response) => {
 const deleteDocument = (request, response) => {
   helper.verifyIsInt(request)
   .then((result) => {
-    const verifiedParams = result.mapped();
+    const validationErrors = result.mapped();
     const noErrors = result.isEmpty();
     if (!noErrors) {
-      return response.status(412).json({ message: verifiedParams });
+      return response.status(412).json({ message: validationErrors });
     }
     const query = helper.queryUpdateDeleteDoc(request);
     models.Document.destroy(query)
@@ -177,7 +177,7 @@ const deleteDocument = (request, response) => {
         });
       }
       response.status(401).json({
-        message: 'Access Denied',
+        message: 'You require access to delete this Doc or the ID does not exist',
         document,
         more_info: 'https://dmsys.herokuapp.com/#delete-documents',
       });
@@ -199,11 +199,11 @@ const deleteDocument = (request, response) => {
 const getDocumentByUserId = (request, response) => {
   helper.verifyIsInt(request)
   .then((result) => {
-    const verifiedParams = result.mapped();
+    const validationErrors = result.mapped();
     const noErrors = result.isEmpty();
     if (!noErrors) {
       return response.status(412).json({
-        message: verifiedParams,
+        message: validationErrors,
         more_info: 'https://dmsys.herokuapp.com/#get-documents-by-userid',
       });
     }
@@ -241,18 +241,18 @@ const getDocumentByUserId = (request, response) => {
 const getDocumentByRole = (request, response) => {
   helper.verifyIsInt(request)
   .then((result) => {
-    const verifiedParams = result.mapped();
+    const validationErrors = result.mapped();
     const noErrors = result.isEmpty();
     if (!noErrors) {
       return response.status(412).json({
-        message: verifiedParams,
+        message: validationErrors,
         more_info: 'https://dmsys.herokuapp.com/#get-documents-by-roleid',
       });
     }
     const query = helper.queryDocumentsByRole(request);
     if (query === false) {
       return response.status(401).json({
-        message: 'Access Denied',
+        message: 'You require access to view this Doc or the ID does not exist',
         more_info: 'https://dmsys.herokuapp.com/#get-documents-by-roleid',
       });
     }

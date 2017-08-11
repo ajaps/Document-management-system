@@ -10,10 +10,14 @@ import models from '../models/index';
    * @return {object} object - information about the status of the request
    */
 const getAllRoles = (request, response) => {
+  const query = helper.queryForAllUsers(request);
   models.Role.findAndCountAll()
   .then(roles => response.status(200).json({
-    roleCount: roles.count,
     message: 'roles retrieved successfully',
+    page: Math.floor(query.offset / query.limit) + 1,
+    pageCount: Math.ceil(roles.count / query.limit),
+    pageSize: query.limit,
+    totalCount: roles.count,
     role: roles.rows,
   })
   )
@@ -74,7 +78,7 @@ const updateRole = (request, response) => {
     const roleId = Number(request.params.id);
     if (roleId === request.decoded.data.roleId) {
       return response.status(403).json({
-        message: 'forbidden',
+        message: 'This action is forbidden',
         more_info: 'https://dmsys.herokuapp.com/#update-role',
       });
     }

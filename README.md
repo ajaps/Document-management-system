@@ -1,4 +1,4 @@
-### Document Management System API
+### Document Management System API (DMSys)
 
 [![Build Status](https://travis-ci.org/framky007/Document-management-system.svg?branch=develop)](https://travis-ci.org/framky007/Document-management-system)
 [![Coverage Status](https://coveralls.io/repos/github/framky007/Document-management-system/badge.svg?branch=develop)](https://coveralls.io/github/framky007/Document-management-system?branch=develop)
@@ -53,8 +53,44 @@
 *  Run the following commands.
   *  `$ npm test
 
-  ## How to contribute
-To contribute, fork this repo to your private repository and create a pull request based on the feature you want to add.
+## Contribute
+
+If you are interested in contributing to development of DMSys, follow the instructions below to contribute.
+
+- Fork the repository
+
+- Make your change
+
+- Commit your change to your forked repository
+
+- Provide a detailed commit description
+
+- Create a pull request
+
+
+# FAQ
+
+## Do I need to pay to use the APIs ?
+
+No, its free for everyone.
+
+## How do I connect to the APIs?
+
+There are 4 Http verbs used in this API - GET, DELETE, PUT and POST. This represents the most commonly used actions - Create, Read, Update and Delete (CRUD).
+ Please click **[here](https://dmsys.herokuapp.com)** for more information
+
+## What return formats do you support?
+
+DMSYS APIs currently returns data in ```JSON``` format.
+
+## What kind of authentication is required?
+
+All endpints except login and signup are protected. Users requre ```token``` to access all protected endpoints.
+A ```Token``` is sent to client after successful signup and login.
+The Token must be set as authorization in the ```http request header``` in subsequent request(s) to access the protected routes
+
+# Limitations
+The application uses shared database (Elephantsql), this may lead to slow in response at some point.
 
 ## Disclaimer
 This app and its functions are limited by time constraint and is in no way at its best.

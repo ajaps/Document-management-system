@@ -1,5 +1,14 @@
 
 const verifyUserParams = (request) => {
+  request.assert('username', 'username field is required').notEmpty();
+  request.assert('email', 'email field is required').notEmpty();
+  request.assert('email', 'valid email address is required').isEmail();
+  request.assert('password', 'password field is required').notEmpty();
+  request.assert('password', '8 or more characters required').len(8);
+  return request.getValidationResult();
+};
+
+const verifyLoginParams = (request) => {
   request.assert('email', 'email field is required').notEmpty();
   request.assert('email', 'valid email address is required').isEmail();
   request.assert('password', 'password field is required').notEmpty();
@@ -104,7 +113,7 @@ const queryForAllDocuments = (request) => {
 const queryForAllUsers = (request) => {
   const getPaginate = paginate(request);
   return {
-    attributes: ['id', 'email', 'roleId'],
+    attributes: ['id', 'username', 'roleId'],
     order: [['roleId', 'ASC']],
     offset: getPaginate[0],
     limit: getPaginate[1],
@@ -156,11 +165,14 @@ const queryFindDocByUserId = (request) => {
 };
 
 const querySearchDocuments = (request) => {
+  const getPaginate = paginate(request);
   const isAdmin = request.decoded.data.roleId === 1;
   if (isAdmin) {
     return {
       title: { $iLike: `%${request.query.q}%` },
-      order: [['createdAt', 'DESC']]
+      order: [['createdAt', 'DESC']],
+      offset: getPaginate[0],
+      limit: getPaginate[1],
     };
   }
   return { order: [['createdAt', 'DESC']],
@@ -168,16 +180,22 @@ const querySearchDocuments = (request) => {
       title: { $iLike: `%${request.query.q}%` },
       $or: [
         { userId: request.decoded.data.userId },
-        { access: 'public' }
+        { access: 'public' },
+        { $and: [
+          { roleId: request.decoded.data.roleId },
+          { access: 'role' },
+      ] }
       ]
-    }
+    },
+    offset: getPaginate[0],
+    limit: getPaginate[1],
   };
 };
 
 const findUserById = (request) => {
   const userId = request.params.id;
   return {
-    attributes: ['id', 'email', 'roleId'],
+    attributes: ['id', 'username', 'roleId'],
     where: { id: userId }
   };
 };
@@ -204,6 +222,7 @@ const queryDocumentsByRole = (request) => {
 
 
 module.exports = {
+  verifyLoginParams,
   verifyUserParams,
   verifyDocumentParams,
   paginate,
