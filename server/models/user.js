@@ -3,6 +3,10 @@ const SALT_ROUNDS = Number(process.env.SALT_ROUNDS);
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
+    username: {
+      allowNull: false,
+      type: DataTypes.STRING,
+    },
     email: {
       allowNull: false,
       isEmail: true,
@@ -38,6 +42,9 @@ module.exports = (sequelize, DataTypes) => {
   //Hooks
   User.afterValidate((user) =>
     user.password = bcrypt.hashSync(user.password, SALT_ROUNDS)
+  );
+  User.beforeValidate((user) =>
+    user.email = (user.email).toLowerCase()
   );
   return User;
 };

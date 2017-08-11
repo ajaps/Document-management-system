@@ -56,7 +56,7 @@ const getAllDocument = (request, response) => {
   .then((documents) => {
     if (documents.count < 1) {
       return response.status(404).json({
-        message: "You dont have access to view available docs",
+        message: 'You dont have access to view available document(s)',
         documents,
         more_info: 'https://dmsys.herokuapp.com/#creates-new-documents',
       });
@@ -100,7 +100,7 @@ const updateDocument = (request, response) => {
         message: 'updated successfully',
       });
     }
-    return response.status(401).json({
+    return response.status(404).json({
       message: 'You require access to view this Doc or the ID does not exist',
       more_info: 'https://dmsys.herokuapp.com/#update-document',
     });

@@ -1,8 +1,8 @@
 import chai from 'chai';
 import supertest from 'supertest';
-import authentication from '../middleware/authentication';
-import mockData from '../mockData/mockData';
-import server from '../../server';
+import authentication from '../server/middleware/authentication';
+import mockData from './mockData/mockData';
+import server from '../server';
 
 
 const expect = chai.expect;
@@ -117,6 +117,19 @@ describe('When user', () => {
       .end((err, res) => {
         expect(res.body.message).to.be.equal('updated successfully');
         expect(res.statusCode).to.be.equal(200);
+        done();
+      });
+    });
+
+      it(`should return a status code 404,
+      and a JSON stating if the document to updated doesn't exist`, (done) => {
+      request.put('/api/v1/documents/30')
+      .set('Accept', 'application/json')
+      .send({ content: 'In the beginning, God created heaven and earth' })
+      .set({ Authorization: adminToken })
+      .end((err, res) => {
+        expect(res.body.message).to.be.equal(mockData.docNotFound);
+        expect(res.statusCode).to.be.equal(404);
         done();
       });
     });

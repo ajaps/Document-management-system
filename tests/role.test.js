@@ -1,8 +1,8 @@
 import chai from 'chai';
 import supertest from 'supertest';
-import authentication from '../middleware/authentication';
-import mockData from '../mockData/mockData';
-import server from '../../server';
+import authentication from '../server/middleware/authentication';
+import mockData from './mockData/mockData';
+import server from '../server';
 
 
 const expect = chai.expect;
@@ -19,7 +19,7 @@ describe('When user', () => {
       .set({ Authorization: regularToken })
       .end((err, res) => {
         expect(res.body.role).to.be.an('array');
-        expect(res.body.roleCount).to.be.equal(4);
+        expect(res.body.totalCount).to.be.equal(4);
         expect(res.body.message).to.be.equal('roles retrieved successfully');
         expect(res.statusCode).to.be.equal(200);
         done();

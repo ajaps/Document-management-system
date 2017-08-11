@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>DocSys API Reference</title>
+    <title>DMSys API Reference</title>
 
     <style>
       .highlight table td { padding: 5px; }
@@ -209,7 +209,7 @@
       </span>
     </a>
     <div class="toc-wrapper">
-    <h1 style="color: lightblue; text-align:center;"> DocSys </h1>
+    <h1 style="color: lightblue; text-align:center;"> DMSys </h1>
         <div class="lang-selector">
               <a href="#" data-language-name="javascript">javascript</a>
         </div>
@@ -305,13 +305,13 @@
       <div class="dark-box"></div>
       <div class="content">
         <h1 id='introduction'>Introduction</h1>
-<p>Welcome to the Document mananagment System API (DocSys)! You can use our API to manage documents, The API provides login and signup route, autenticated routes for create, updating and searching documents, users and roles.</p>
+<p>Welcome to the Document mananagment System API (DMSys)! You can use our API to manage documents, The API provides login and signup route, autenticated routes for create, updating and searching documents, users and roles.</p>
 
 <p>Each user has a record contaning email, password and roleID. A user record is created when the user signs up.
 Each Document also have a record containing Document title, content, access type which can either be &#39;public&#39;, &#39;private&#39; or &#39;role&#39;, this determines who can view the document.
 A new user is assigned a role of &#39;regular&#39;, The Admin can change a user&#39;s role at anytime and he can also update the role records in the database except the &#39;Admin&#39; record.</p>
 
-<p>All APIs in DocSys are RESTful, you can be assure of consistent response for all request made.</p>
+<p>All APIs in DMSys are RESTful, you can be assure of consistent response for all request made.</p>
 <h1 id='authentication'>Authentication</h1>
 <p>All routes are protected and needs a valid token except the login and signup routes.
 To get a token, the user signs up or logs in(If the user has signed up previously).
@@ -494,7 +494,7 @@ Remember — Only an Admin can create roles!
 </tbody></table>
 
 <aside class="success">
-Remember — Only an Admin can update any record on the roles table, expect the 
+Remember — Only an Admin can update any record on the roles table, expect the
 first roleID - Admin
 </aside>
 <h1 id='users'>Users</h1><h2 id='find-matching-instances-of-user'>Find matching instances of user</h2>
@@ -1224,7 +1224,7 @@ Remember — The query is executed on the document title!
 <h1 id='errors'>Errors</h1>
 <aside class="notice">Error Codes used in the API.</aside>
 
-<p>The DocSys API uses the following error codes:</p>
+<p>The DMSys API uses the following error codes:</p>
 
 <table><thead>
 <tr>

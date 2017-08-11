@@ -1,3 +1,5 @@
+import faker from 'faker';
+
 const mockData = {
   invalidEmail: { param: 'email',
     msg: 'valid email address is required',
@@ -7,11 +9,13 @@ const mockData = {
     msg: '8 or more characters required',
     value: 'Food' },
 
-  usersInDatabase: [{ id: 1, email: 'ajaps@yahoo.com', roleId: 1 },
-     { id: 2, email: 'ajaps1@yahoo.com', roleId: 2 },
-     { id: 4, email: 'framky0071@yahoo.com', roleId: 2 },
-     { id: 5, email: 'johnDoe@yahoo.com', roleId: 2 },
-     { id: 3, email: 'framky007@yahoo.com', roleId: 3 }],
+  docNotFound: 'You require access to view this Doc or the ID does not exist',
+
+  usersInDatabase: [ { id: 1, username: 'framky', roleId: 1 },
+    { id: 2, username: 'framky007', roleId: 2 },
+    { id: 4, username: 'johnbull', roleId: 2 },
+    { id: 5, username: 'john', roleId: 2 },
+    { id: 3, username: 'frank', roleId: 3 } ],
 
   noToken: { message: 'A token is requeired for authentication' },
 
@@ -110,7 +114,28 @@ const mockData = {
       },
 
   invalidAccessResult: { message: 'An unexpected error occurred',
-    more_info: 'https://dmsys.herokuapp.com/#creates-new-documents' }
+    more_info: 'https://dmsys.herokuapp.com/#creates-new-documents' },
+
+  publicDocument: {
+    id: faker.random.number({ max: 100, min: 1 }),
+    title: 'public document',
+    content: faker.lorem.sentence(),
+    access: 'public',
+    userId: 2,
+    roleId: 2,
+  },
+  testRole: {
+    roleName: 'visitor'
+  },
+  UserData: {
+    id: faker.random.number({ max: 100, min: 1 }),
+    first_name: faker.name.firstName(),
+    last_name: faker.name.lastName(),
+    username: 'regularUser',
+    email: 'regular@user.com',
+    password: faker.internet.password(),
+    role_id: 2
+  },
 };
 
 

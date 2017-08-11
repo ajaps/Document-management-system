@@ -35,7 +35,7 @@ const adminPass = (request, response, next) => {
   const isAdmin = request.decoded.data.roleId === 1;
   if (!isAdmin) {
     return response.status(401).json({
-      message: 'Admin priviledges is required to create new roles',
+      message: 'Admin priviledges is required to perform this action',
     });
   }
   next();
