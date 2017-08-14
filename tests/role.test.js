@@ -1,8 +1,8 @@
 import chai from 'chai';
 import supertest from 'supertest';
-import authentication from '../middleware/authentication';
-import mockData from '../mockData/mockData';
-import server from '../../server';
+import authentication from '../server/middleware/authentication';
+import mockData from './mockData/mockData';
+import server from '../server';
 
 
 const expect = chai.expect;
@@ -18,9 +18,8 @@ describe('When user', () => {
       .set('Accept', 'application/json')
       .set({ Authorization: regularToken })
       .end((err, res) => {
-        expect(res.body.role).to.be.an('array');
-        expect(res.body.roleCount).to.be.equal(4);
-        expect(res.body.message).to.be.equal('roles retrieved successfully');
+        expect(res.body).to.be.eql(mockData.availableRoles);
+        expect(res.body.message).to.be.equal('successful');
         expect(res.statusCode).to.be.equal(200);
         done();
       });
@@ -79,7 +78,7 @@ describe('When user', () => {
       .set({ Authorization: adminToken })
       .send({ roleName: 'student' })
       .end((err, res) => {
-        expect(res.body.message).to.be.equal('forbidden');
+        expect(res.body.message).to.be.equal('This action is forbidden');
         expect(res.statusCode).to.be.equal(403);
         done();
       });

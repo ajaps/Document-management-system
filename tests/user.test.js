@@ -1,8 +1,8 @@
 import chai from 'chai';
 import supertest from 'supertest';
-import authentication from '../middleware/authentication';
-import mockData from '../mockData/mockData';
-import server from '../../server';
+import authentication from '../server/middleware/authentication';
+import mockData from './mockData/mockData';
+import server from '../server';
 
 const expect = chai.expect;
 const request = supertest(server);
@@ -13,7 +13,7 @@ describe('When user', () => {
   describe('signs up', () => {
     it('should return a JSON object containing message and a token', (done) => {
       request.post('/api/v1/users')
-    .send({ email: 'johnDoe@yahoo.com', password: 'humanity' })
+    .send({ email: 'johnDoe@yahoo.com', password: 'humanity', username: 'john' })
     .end((err, res) => {
       regularToken = res.body.token;
       expect(res.body.message).to.be.equal('New user created successfully');
@@ -26,7 +26,7 @@ describe('When user', () => {
     it(`should return "johnDoe@yahoo.com already exist" and status 409,
       when user tries to signup with an existing email`, (done) => {
       request.post('/api/v1/users')
-    .send({ email: 'johnDoe@yahoo.com', password: 'goodFood' })
+    .send({ email: 'johnDoe@yahoo.com', password: 'goodFood', username: 'joh' })
     .end((err, res) => {
       expect(res.body.message).to.be.equal('johnDoe@yahoo.com already exist');
       expect((res.body.token)).to.be.a('null');
@@ -38,7 +38,7 @@ describe('When user', () => {
     it(`should return a json object with param and msg,
       when user tries to signup without a valid email`, (done) => {
       request.post('/api/v1/users')
-    .send({ email: 'johnDoe@yahoo', password: 'goodFood' })
+    .send({ email: 'johnDoe@yahoo', password: 'goodFood', username: 'joh' })
     .end((err, res) => {
       expect(res.body.message.email).to.eql(mockData.invalidEmail);
       expect(res.statusCode).to.be.equal(412);
@@ -50,7 +50,7 @@ describe('When user', () => {
       when user tries to signup
       without a password greater than 8 characters`, (done) => {
       request.post('/api/v1/users')
-    .send({ email: 'johnDoe@yahoo.com', password: 'Food' })
+    .send({ email: 'johnDoe@yahoo.com', password: 'Food', username: 'joh' })
     .end((err, res) => {
       expect(res.body.message.password).to.eql(mockData.invalidPassword);
       expect(res.statusCode).to.be.equal(412);
@@ -171,11 +171,24 @@ describe('When user', () => {
       request.put('/api/v1/users/3')
     .set({ Authorization: regularToken })
     .set('Accept', 'application/json')
-    .send({ email: 'frank@gmail.com', password: 'humanity' })
+    .send({ email: 'frank@gmail.com', password: 'humanity', roleId: 1 })
     .end((err, res) => {
       expect(res.body.message).to.be
       .equal("Only an Admin can update another user's attributes");
       expect(res.statusCode).to.be.equal(401);
+      done();
+    });
+    });
+
+    it(`should return a status code 200,
+      when Admin update another users attributes`, (done) => {
+      request.put('/api/v1/users/3')
+    .set({ Authorization: adminToken })
+    .set('Accept', 'application/json')
+    .send({ email: 'frank007@gmail.com', password: 'humanity', roleId: 3 })
+    .end((err, res) => {
+      expect(res.body.message).to.be.equal('User updated successfully');
+      expect(res.statusCode).to.be.equal(200);
       done();
     });
     });

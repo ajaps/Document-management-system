@@ -17,5 +17,11 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'roleId',
     });
   };
+
+  // Hooks
+  Role.beforeValidate((role) => {
+    role.roleName = (role.roleName).toLowerCase();
+  });
+
   return Role;
 };

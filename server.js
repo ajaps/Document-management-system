@@ -10,7 +10,6 @@ dotenv.config();
 const server = express();
 
 server.use(express.static(path.join(__dirname, '../Documentation')));
-// server.use(express.static(path.resolve(`${__dirname}./public`)));
 
 
 server.use(bodyParser.urlencoded({ extended: false }));
