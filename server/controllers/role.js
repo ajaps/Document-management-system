@@ -1,6 +1,7 @@
 import helper from '../helpers/helper';
 import models from '../models/index';
 
+const Role = models.Role;
 
 /**
    * gets all available roles in the database
@@ -10,16 +11,11 @@ import models from '../models/index';
    * @return {object} object - information about the status of the request
    */
 const getAllRoles = (request, response) => {
-  const query = helper.queryForAllUsers(request);
-  models.Role.findAndCountAll()
-  .then(roles => response.status(200).json({
-    message: 'roles retrieved successfully',
-    page: Math.floor(query.offset / query.limit) + 1,
-    pageCount: Math.ceil(roles.count / query.limit),
-    pageSize: query.limit,
-    totalCount: roles.count,
-    role: roles.rows,
-  })
+  const query = helper.queryForAllRoles(request);
+  Role.findAndCountAll(query)
+  .then(roles => response.status(200).json(
+      helper.paginateResult(roles, query, 'roles')
+    )
   )
   .catch(error => response.status(500).json({
     message: 'An unexpected error occurred',
@@ -43,7 +39,7 @@ const createRole = (request, response) => {
       more_info: 'https://dmsys.herokuapp.com/#create-new-role',
     });
   }
-  models.Role.create({
+  Role.create({
     roleName: request.body.roleName,
   })
   .then(role => response.status(200).json({
@@ -55,6 +51,7 @@ const createRole = (request, response) => {
     message: `Cannot create role with specified ID, ensure the roleName
       doesn't already exist in the database`,
     error: error.message,
+    roleName: (request.body.roleName).toLowerCase(),
     more_info: 'https://dmsys.herokuapp.com/#create-new-role',
   })
   );
@@ -82,7 +79,7 @@ const updateRole = (request, response) => {
         more_info: 'https://dmsys.herokuapp.com/#update-role',
       });
     }
-    models.Role.update(request.body, { where: { id: roleId } })
+    Role.update(request.body, { where: { id: roleId } })
     .then(() => response.status(200).json({
       message: 'updated successfully',
     })

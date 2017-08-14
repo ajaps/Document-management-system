@@ -1,6 +1,7 @@
 import faker from 'faker';
 
 const mockData = {
+
   invalidEmail: { param: 'email',
     msg: 'valid email address is required',
     value: 'johnDoe@yahoo' },
@@ -9,20 +10,87 @@ const mockData = {
     msg: '8 or more characters required',
     value: 'Food' },
 
-  docNotFound: 'You require access to view this Doc or the ID does not exist',
+  availableRoles: { message: 'successful',
+    page: 1,
+    pageCount: 1,
+    pageSize: 10,
+    totalCount: 4,
+    roles:
+    [{ id: 1,
+      roleName: 'admin',
+      createdAt: '2017-08-14',
+      updatedAt: '2017-08-14' },
+    { id: 2,
+      roleName: 'regular',
+      createdAt: '2017-08-14',
+      updatedAt: '2017-08-14' },
+    { id: 3,
+      roleName: 'facilitator',
+      createdAt: '2017-08-14',
+      updatedAt: '2017-08-14' },
+    { id: 4,
+      roleName: 'fellow',
+      createdAt: '2017-08-14',
+      updatedAt: '2017-08-14' }
+    ]
+  },
+  userSearchResult: { message: 'successful',
+    page: 1,
+    pageCount: 1,
+    pageSize: 10,
+    totalCount: 3,
+    users:
+    [{ id: 1, username: 'framky', roleId: 1 },
+     { id: 2, username: 'framky007', roleId: 2 },
+     { id: 3, username: 'frank', roleId: 3 }]
+  },
 
-  usersInDatabase: [ { id: 1, username: 'framky', roleId: 1 },
+  docSearchResult: { message: 'successful',
+    page: 1,
+    pageCount: 1,
+    pageSize: 10,
+    totalCount: 3,
+    documents:
+    [{ id: 1,
+      title: 'Introduction to 101',
+      content: 'The definition of computer is',
+      access: 'public',
+      userId: 1,
+      roleId: 1,
+      createdAt: '2017-08-14',
+      updatedAt: '2017-08-14' },
+    { id: 4,
+      title: 'Introduction to 104',
+      content: 'javascript keeps evolving to meet human wants and needs',
+      access: 'role',
+      userId: 4,
+      roleId: 2,
+      createdAt: '2017-08-14',
+      updatedAt: '2017-08-14' },
+    { id: 5,
+      title: 'Introduction to 105',
+      content: 'Did i do that? did i really do that?',
+      access: 'role',
+      userId: 2,
+      roleId: 2,
+      createdAt: '2017-08-14',
+      updatedAt: '2017-08-14' }]
+  },
+
+  docNotFound: 'You require access to update this Doc or the ID does not exist',
+
+  usersInDatabase: [{ id: 1, username: 'framky', roleId: 1 },
     { id: 2, username: 'framky007', roleId: 2 },
     { id: 4, username: 'johnbull', roleId: 2 },
     { id: 5, username: 'john', roleId: 2 },
-    { id: 3, username: 'frank', roleId: 3 } ],
+    { id: 3, username: 'frank', roleId: 3 }],
 
   noToken: { message: 'A token is requeired for authentication' },
 
   invalidToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiZnJhbWt5Q',
 
-  admin: { userId: 1, email: 'ajaps@yahoo.com', roleId: 1 },
-  regularUser: { userId: 2, email: 'johnDoe@yahoo.com', roleId: 2 },
+  admin: { userId: 1, roleId: 1 },
+  regularUser: { userId: 2, roleId: 2 },
 
   invalidTitle: { param: 'title', msg: '10 to 150 characters required' },
 
@@ -36,7 +104,10 @@ const mockData = {
     content: 'This is the beginning of history class',
     access: 'public'
   },
-  createdDoc: { message: 'Document created', title: 'history 211', ownerId: 2 },
+  createdDoc: { message: 'Document created',
+    title: 'history 211',
+    ownerId: 2,
+    Document_roleId: 2 },
 
   foundUser: { userID: 1, roleId: 1, email: 'ajaps@yahoo.com' },
   allDocuments: [
@@ -99,21 +170,32 @@ const mockData = {
     access: 'protected'
   },
 
-  invalidAccess : { param: 'access',
-        msg: 'Access type must be public, private or role',
-        value: 'protected' },
+  invalidAccess: { message: 'An unexpected error occured',
+    error:
+    [{ message: 'Must be \'private\', \'public\' or \'role\' ',
+      type: 'Validation error',
+      path: 'access',
+      value: 'protected',
+      __raw: {} }],
+    more_info: 'https://dmsys.herokuapp.com/#update-document' },
 
-  invalidTitleLength : { param: 'title',
-        msg: '10 to 150 characters required',
-        value: 'Food' },
+  invalidTitleLength: { param: 'title',
+    msg: '10 to 150 characters required',
+    value: 'Food' },
 
   invalidId: {
-        param: 'id',
-        msg: 'ID must be a number',
-        value: 'frank',
-      },
+    param: 'id',
+    msg: 'ID must be a number',
+    value: 'frank',
+  },
 
   invalidAccessResult: { message: 'An unexpected error occurred',
+    error:
+    [{ message: 'Must be \'private\', \'public\' or \'role\' ',
+      type: 'Validation error',
+      path: 'access',
+      value: 'protected',
+      __raw: {} }],
     more_info: 'https://dmsys.herokuapp.com/#creates-new-documents' },
 
   publicDocument: {

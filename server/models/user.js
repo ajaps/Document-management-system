@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+
 const SALT_ROUNDS = Number(process.env.SALT_ROUNDS);
 
 module.exports = (sequelize, DataTypes) => {
@@ -25,7 +26,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
     },
   });
-  //relationship declaration
+
+  // relationship declaration
   User.associate = (models) => {
     User.belongsTo(models.Role, {
       foreignKey: 'roleId',
@@ -34,17 +36,19 @@ module.exports = (sequelize, DataTypes) => {
     User.hasMany(models.Document, {
       foreignKey: 'userId',
       onDelete: 'CASCADE',
-      onUpdate: 'CASCADE',
       as: 'documents',
     });
   };
 
-  //Hooks
-  User.afterValidate((user) =>
-    user.password = bcrypt.hashSync(user.password, SALT_ROUNDS)
-  );
-  User.beforeValidate((user) =>
-    user.email = (user.email).toLowerCase()
-  );
+  // Hooks
+  User.beforeCreate((user) => {
+    user.password = bcrypt.hashSync(user.password, SALT_ROUNDS);
+    user.email = (user.email).toLowerCase();
+  });
+  User.beforeUpdate((user) => {
+    user.password = bcrypt.hashSync(user.password, SALT_ROUNDS);
+    user.email = (user.email).toLowerCase();
+  });
+
   return User;
 };

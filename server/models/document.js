@@ -13,7 +13,13 @@ module.exports = (sequelize, DataTypes) => {
     access: {
       defaultValue: 'public',
       values: ['public', 'private', 'role'],
-      type: DataTypes.STRING,
+      type: DataTypes.ENUM,
+      validate: {
+        isIn: {
+          args: [['public', 'private', 'role']],
+          msg: "Must be 'private', 'public' or 'role' ",
+        }
+      },
     },
     userId: {
       allowNull: false,
@@ -36,5 +42,11 @@ module.exports = (sequelize, DataTypes) => {
       onUpdate: 'CASCADE',
     });
   };
+
+  // Hooks
+  Document.beforeValidate((document) => {
+    document.access = (document.access).toLowerCase();
+  });
+
   return Document;
 };

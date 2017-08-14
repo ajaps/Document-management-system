@@ -28,13 +28,6 @@ describe('Roles Model', () => {
   });
 
   describe('Role Validation', () => {
-    it('requires title field to create a role', (done) => {
-      Role.create()
-          .catch((error) => {
-            expect(error.errors[0].message).to.be.equal('roleName cannot be null');
-            done();
-          });
-    });
     it('ensures a role can only be created once(unique)', (done) => {
       Role.create(mockData.testRole)
           .catch((error) => {
