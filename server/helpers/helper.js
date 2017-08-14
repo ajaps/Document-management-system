@@ -1,67 +1,50 @@
 
 const verifyUserParams = (request) => {
-  request.assert('username', 'username field is required').notEmpty();
-  request.assert('email', 'email field is required').notEmpty();
-  request.assert('email', 'valid email address is required').isEmail();
-  request.assert('password', 'password field is required').notEmpty();
-  request.assert('password', '8 or more characters required').len(8);
+  request.checkBody('username', 'username field is required').notEmpty();
+  request.checkBody('email', 'email field is required').notEmpty();
+  request.checkBody('email', 'valid email address is required').isEmail();
+  request.checkBody('password', 'password field is required').notEmpty();
+  request.checkBody('password', '8 or more characters required').len(8);
+  return request.getValidationResult();
+};
+
+const verifyUpdateUserParams = (request) => {
+  request.checkParams('id', 'ID must be specified for this operation').notEmpty();
+  request.checkParams('id', 'ID must be a number').isInt();
+  request.checkBody('email', 'valid email address is required').optional().isEmail();
+  request.checkBody('password', '8 or more characters required').optional().len(8);
   return request.getValidationResult();
 };
 
 const verifyLoginParams = (request) => {
-  request.assert('email', 'email field is required').notEmpty();
-  request.assert('email', 'valid email address is required').isEmail();
-  request.assert('password', 'password field is required').notEmpty();
-  request.assert('password', '8 or more characters required').len(8);
+  request.checkBody('email', 'email field is required').notEmpty();
+  request.checkBody('email', 'valid email address is required').isEmail();
+  request.checkBody('password', 'password field is required').notEmpty();
+  request.checkBody('password', '8 or more characters required').len(8);
   return request.getValidationResult();
 };
 
 const verifyDocumentParams = (request) => {
-  request.assert('title', 'title field is required').notEmpty();
-  request.assert('title', '10 to 150 characters required').len(10, 150);
-  request.assert('content', 'Document content cannot be empty').notEmpty();
+  request.checkBody('title', 'title field is required').notEmpty();
+  request.checkBody('title', '10 to 150 characters required').len(10, 150);
+  request.checkBody('content', 'Document content cannot be empty').notEmpty();
+  request.checkBody('roleId', 'roleId must be a number').optional().isInt();
+  request.checkBody('access', "acesss must be 'public', 'private' or 'role'").optional().isAlpha();
   return request.getValidationResult();
 };
 
 const verifyDocUpdateParams = (request) => {
-  if (isNaN(request.params.id)) {
-    return {
-      id: {
-        param: 'id',
-        msg: 'ID must be a number',
-        value: request.params.id
-      },
-    };
-  }
-  if (request.body.title) {
-    const titleLength = request.body.title.length;
-    if (titleLength < 10 || titleLength > 150) {
-      return {
-        title: {
-          param: 'title',
-          msg: '10 to 150 characters required',
-          value: request.body.title,
-        },
-      };
-    }
-  }
-  if (request.body.access) {
-    request.body.access = (request.body.access).toLowerCase();
-    if (!['public', 'private', 'role'].includes(request.body.access)) {
-      return {
-        access: {
-          param: 'access',
-          msg: 'Access type must be public, private or role',
-          value: request.body.access,
-        },
-      };
-    }
-  }
+  request.checkParams('id', 'ID must be specified for this operation').notEmpty();
+  request.checkParams('id', 'ID must be a number').isInt();
+  request.checkBody('title', '10 to 150 characters required').optional().len(10, 150);
+  request.checkBody('roleId', 'roleId must be a number').optional().isInt();
+  request.checkBody('access', "acesss must be 'public', 'private' or 'role'").optional().isAlpha();
+  return request.getValidationResult();
 };
 
 const verifyIsInt = (request) => {
-  request.assert('id', 'ID must be specified for this operation').notEmpty();
-  request.assert('id', 'ID must be a number').isInt();
+  request.checkParams('id', 'ID must be specified for this operation').notEmpty();
+  request.checkParams('id', 'ID must be a number').isInt();
   return request.getValidationResult();
 };
 
@@ -112,9 +95,32 @@ const queryForAllDocuments = (request) => {
 
 const queryForAllUsers = (request) => {
   const getPaginate = paginate(request);
+  const isAdmin = request.decoded.data.roleId === 1;
+  if (isAdmin) {
+    return {
+      order: [['roleId', 'ASC']],
+      offset: getPaginate[0],
+      limit: getPaginate[1],
+    };
+  }
   return {
     attributes: ['id', 'username', 'roleId'],
     order: [['roleId', 'ASC']],
+    offset: getPaginate[0],
+    limit: getPaginate[1],
+  };
+};
+
+const queryForAllRoles = (request) => {
+  const getPaginate = paginate(request);
+  const isAdmin = request.decoded.data.roleId === 1;
+  if (isAdmin) {
+    return {
+      offset: getPaginate[0],
+      limit: getPaginate[1],
+    };
+  }
+  return {
     offset: getPaginate[0],
     limit: getPaginate[1],
   };
@@ -139,14 +145,24 @@ const queryDocbyId = (request) => {
   };
 };
 
+const queryUpdateUser = (request) => {
+  const userId = request.params.id;
+  return {
+    where: { id: userId },
+    individualHooks: true,
+  };
+};
+
 const queryUpdateDeleteDoc = (request) => {
   const documentId = request.params.id;
   const isAdmin = request.decoded.data.roleId === 1;
   if (isAdmin) {
-    return { where: { id: documentId } };
+    return {
+      where: { id: documentId },
+    };
   }
   return {
-    where: { id: documentId, userId: request.decoded.data.userId }
+    where: { id: documentId, userId: request.decoded.data.userId },
   };
 };
 
@@ -169,7 +185,9 @@ const querySearchDocuments = (request) => {
   const isAdmin = request.decoded.data.roleId === 1;
   if (isAdmin) {
     return {
-      title: { $iLike: `%${request.query.q}%` },
+      where: {
+        title: { $iLike: `%${request.query.q}%` },
+      },
       order: [['createdAt', 'DESC']],
       offset: getPaginate[0],
       limit: getPaginate[1],
@@ -184,7 +202,7 @@ const querySearchDocuments = (request) => {
         { $and: [
           { roleId: request.decoded.data.roleId },
           { access: 'role' },
-      ] }
+        ] }
       ]
     },
     offset: getPaginate[0],
@@ -194,6 +212,12 @@ const querySearchDocuments = (request) => {
 
 const findUserById = (request) => {
   const userId = request.params.id;
+  const isAdmin = request.decoded.data.roleId === 1;
+  if (isAdmin) {
+    return {
+      where: { id: userId }
+    };
+  }
   return {
     attributes: ['id', 'username', 'roleId'],
     where: { id: userId }
@@ -220,6 +244,17 @@ const queryDocumentsByRole = (request) => {
   };
 };
 
+const paginateResult = (data, query, type) => {
+  const result = {
+    message: 'successful',
+    page: Math.floor(query.offset / query.limit) + 1,
+    pageCount: Math.ceil(data.count / query.limit),
+    pageSize: query.limit,
+    totalCount: data.count,
+  };
+  result[type] = data.rows;
+  return result;
+};
 
 module.exports = {
   verifyLoginParams,
@@ -237,4 +272,8 @@ module.exports = {
   findUserById,
   verifyDocUpdateParams,
   queryDocbyId,
+  queryUpdateUser,
+  verifyUpdateUserParams,
+  paginateResult,
+  queryForAllRoles,
 };

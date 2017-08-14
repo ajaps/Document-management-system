@@ -8,6 +8,7 @@ const User = models.User;
 
 describe('Users Model', () => {
   let user;
+  const query = { where: { id: 3 } };
 
   describe('Create User', () => {
     it('should create new user', (done) => {
@@ -24,6 +25,17 @@ describe('Users Model', () => {
       expect(user.username).to.have.lengthOf.above(0);
       expect(user.email).to.have.string('@');
       done();
+    });
+  });
+
+  describe('delete user', () => {
+    it('should delete existing user', (done) => {
+      User.destroy(query)
+        .then((deleteUser) => {
+          expect(deleteUser).to.be.ok;
+          expect(deleteUser).to.equal(1);
+          done();
+        });
     });
   });
 });

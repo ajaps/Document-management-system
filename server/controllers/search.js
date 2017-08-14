@@ -23,14 +23,9 @@ const searchUser = (request, response) => {
         more_info: 'https://dmsys.herokuapp.com/#search-for-users',
       });
     }
-    response.status(200).json({
-      message: 'successful',
-      page: Math.floor(query.offset / query.limit) + 1,
-      pageCount: Math.ceil(users.count / query.limit),
-      pageSize: query.limit,
-      totalCount: users.count,
-      users: users.rows,
-    });
+    response.status(200).json(
+      helper.paginateResult(users, query, 'users')
+    );
   })
   .catch(error => response.status(500).json({
     message: 'An unexpected error occurred',
@@ -57,14 +52,9 @@ const searchDocument = (request, response) => {
         more_info: 'https://dmsys.herokuapp.com/#search-for-documents-based-on-title',
       });
     }
-    response.status(200).json({
-      message: 'successful',
-      page: Math.floor(query.offset / query.limit) + 1,
-      pageCount: Math.ceil(documents.count / query.limit),
-      pageSize: query.limit,
-      totalCount: documents.count,
-      Documents: documents.rows,
-    });
+    response.status(200).json(
+        helper.paginateResult(documents, query, 'documents')
+      );
   })
   .catch(error => response.status(500).json({
     message: 'An unexpected error occurred',

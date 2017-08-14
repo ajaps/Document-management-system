@@ -171,11 +171,24 @@ describe('When user', () => {
       request.put('/api/v1/users/3')
     .set({ Authorization: regularToken })
     .set('Accept', 'application/json')
-    .send({ email: 'frank@gmail.com', password: 'humanity' })
+    .send({ email: 'frank@gmail.com', password: 'humanity', roleId: 1 })
     .end((err, res) => {
       expect(res.body.message).to.be
       .equal("Only an Admin can update another user's attributes");
       expect(res.statusCode).to.be.equal(401);
+      done();
+    });
+    });
+
+    it(`should return a status code 200,
+      when Admin update another users attributes`, (done) => {
+      request.put('/api/v1/users/3')
+    .set({ Authorization: adminToken })
+    .set('Accept', 'application/json')
+    .send({ email: 'frank007@gmail.com', password: 'humanity', roleId: 3 })
+    .end((err, res) => {
+      expect(res.body.message).to.be.equal('User updated successfully');
+      expect(res.statusCode).to.be.equal(200);
       done();
     });
     });

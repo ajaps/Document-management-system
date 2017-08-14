@@ -1,7 +1,6 @@
 import coveralls from 'gulp-coveralls';
 import exit from 'gulp-exit';
 import gulp from 'gulp';
-import injectModules from 'gulp-inject-modules';
 import istanbul from 'gulp-istanbul';
 import jasmineNode from 'gulp-jasmine-node';
 import loadPlugins from 'gulp-load-plugins';
@@ -41,7 +40,7 @@ gulp.task('coverage', (cb) => {
 gulp.task('coveralls', () => gulp.src('./coverage/lcov')
     .pipe(coveralls()));
 
-// Restart server with on every changes made to file
+// Restart server on every changes made to file
 gulp.task('nodemon', ['babel'], () =>
   plugins.nodemon({
     script: path.join('dist', 'server.js'),
