@@ -1,0 +1,10 @@
+exclude_paths:
+- "server/tests/*"
+engines:
+  # ... CONFIG CONTENT ...
+  eslint:
+    enabled: true
+    # ... CONFIG CONTENT ...
+    checks:
+      import/extensions:
+        enabled: false
