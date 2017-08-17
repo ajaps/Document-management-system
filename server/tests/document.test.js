@@ -1,8 +1,8 @@
 import chai from 'chai';
 import supertest from 'supertest';
-import authentication from '../server/middleware/authentication';
+import authentication from '../../server/middleware/authentication';
 import mockData from './mockData/mockData';
-import server from '../server';
+import server from '../../server';
 
 
 const expect = chai.expect;
@@ -18,20 +18,19 @@ describe('When user', () => {
     .set('Accept', 'application/json')
     .send({ content: 'In the beginning, God created heaven and earth' })
     .end((err, res) => {
-      expect(res.body.message.title).to.eql(mockData.invalidTitle);
+      expect(res.body.detailed_error.title).to.eql(mockData.invalidTitle);
       expect(res.statusCode).to.be.equal(412);
       done();
     });
     });
 
     it(`should return a status code 412,
-      when document title is less than 10 characters`, (done) => {
+      when document title is less than 3 characters`, (done) => {
       request.post('/api/v1/documents')
     .set({ Authorization: regularToken })
     .set('Accept', 'application/json')
-    .send({ content: 'In the beginning,', title: 'history' })
+    .send({ content: 'In the beginning,', title: 'to' })
     .end((err, res) => {
-      // expect(res.body.message.title).to.eql(mockData.shortTitle);
       expect(res.statusCode).to.be.equal(412);
       done();
     });
@@ -44,7 +43,7 @@ describe('When user', () => {
     .set('Accept', 'application/json')
     .send({ title: 'history 101' })
     .end((err, res) => {
-      expect(res.body.message.content).to.eql(mockData.emptyContent);
+      expect(res.body.detailed_error.content).to.eql(mockData.emptyContent);
       expect(res.statusCode).to.be.equal(412);
       done();
     });
@@ -63,14 +62,14 @@ describe('When user', () => {
       });
     });
 
-    it(`should return a status code 409, when document access
+    it(`should return a status code 412, when document access
       is anything other than public, private, role or null`, (done) => {
       request.post('/api/v1/documents')
       .set('Accept', 'application/json')
       .set({ Authorization: regularToken })
       .send(mockData.invalidAccessType)
       .end((err, res) => {
-        expect(res.body).to.eql(mockData.invalidAccessResult);
+        expect(res.body.error).to.equal('An unexpected error occurred');
         expect(res.statusCode).to.be.equal(409);
         done();
       });
@@ -85,7 +84,22 @@ describe('When user', () => {
       .set('Accept', 'application/json')
       .set({ Authorization: regularToken })
       .end((err, res) => {
-        expect(res.body.totalCount).to.equal(5);
+        expect(res.body.pagination.totalCount).to.equal(5);
+        expect(res.statusCode).to.be.equal(200);
+        done();
+      });
+    });
+
+    it(`should return a status code 200,
+      and a an end of file message, when the offset is more than
+        the number of documents in the return object`, (done) => {
+      request.get('/api/v1/documents?offset=101')
+      .set('Accept', 'application/json')
+      .set({ Authorization: regularToken })
+      .end((err, res) => {
+        expect(res.body.message).to
+          .equal('End of page - There are no documents on this page');
+        expect(res.body.pagination.totalCount).to.equal(5);
         expect(res.statusCode).to.be.equal(200);
         done();
       });
@@ -128,20 +142,20 @@ describe('When user', () => {
       .send({ content: 'In the beginning, God created heaven and earth' })
       .set({ Authorization: adminToken })
       .end((err, res) => {
-        expect(res.body.message).to.be.equal(mockData.docNotFound);
+        expect(res.body.error).to.be.equal(mockData.docNotFound);
         expect(res.statusCode).to.be.equal(404);
         done();
       });
     });
 
     it(`should return a status code 412 and a corresponding JSON object,
-      if the document title is less than 10 characters`, (done) => {
+      if the document title is less than 3 characters`, (done) => {
       request.put('/api/v1/documents/3')
       .set('Accept', 'application/json')
-      .send({ title: 'Food' })
+      .send({ title: 'Fo' })
       .set({ Authorization: adminToken })
       .end((err, res) => {
-        expect(res.body.message.title).to.be.eql(mockData.invalidTitleLength);
+        expect(res.body.detailed_error.title).to.be.eql(mockData.invalidTitleLength);
         expect(res.statusCode).to.be.equal(412);
         done();
       });
@@ -164,41 +178,11 @@ describe('When user', () => {
       if the document ID specified is invalid(i.e not a number)`, (done) => {
       request.put('/api/v1/documents/frank')
       .set('Accept', 'application/json')
-      .send({ access: 'protected' })
+      .send({ access: 'public' })
       .set({ Authorization: adminToken })
       .end((err, res) => {
-        expect(res.body.message.id).to.be.eql(mockData.invalidId);
+        expect(res.body.detailed_error.id).to.be.eql(mockData.invalidId);
         expect(res.statusCode).to.be.equal(412);
-        done();
-      });
-    });
-
-    it(`should return a status code 400,
-      and a JSON object stating the doc couldn't be updated`, (done) => {
-      request.put('/api/v1/documents/3')
-      .set('Accept', 'application/json')
-      .send({ content: 'In the beginning, God created heaven and earth',
-        roleId: 8 })
-      .set({ Authorization: adminToken })
-      .end((err, res) => {
-        expect(res.body.message).to
-        .be.equal('An unexpected error occured');
-        expect(res.statusCode).to.be.equal(400);
-        done();
-      });
-    });
-
-    it(`should return a status code 412,
-      and a corresponding JSON object when the `, (done) => {
-      request.put('/api/v1/documents/3')
-      .set('Accept', 'application/json')
-      .send({ content: 'In the beginning, God created heaven and earth',
-        roleId: 8 })
-      .set({ Authorization: adminToken })
-      .end((err, res) => {
-        expect(res.body.message).to
-        .be.equal('An unexpected error occured');
-        expect(res.statusCode).to.be.equal(400);
         done();
       });
     });
@@ -221,7 +205,7 @@ describe('When user', () => {
       .set('Accept', 'application/json')
       .set({ Authorization: regularToken })
       .end((err, res) => {
-        expect(res.body.message).to.be
+        expect(res.body.error).to.be
         .equal('You require access to delete this Doc or the ID does not exist');
         expect(res.statusCode).to.be.equal(401);
         done();
@@ -248,20 +232,21 @@ describe('When user', () => {
       .set('Accept', 'application/json')
       .set({ Authorization: adminToken })
       .end((err, res) => {
-        expect(res.body.message).to.be.equal('retrieved successfully');
+        expect(res.body.message).to.be
+          .equal('documents retrieved successfully');
         expect(res.statusCode).to.be.equal(200);
         done();
       });
     });
-    it(`should return a status code 401 and a message, informing the user he
-      does not have access to view documents under this role`, (done) => {
+    it(`should return a status code 200 and a and a JSON object containng
+      documents under user own's role, when the ID specified
+        does not match the user's roleId`, (done) => {
       request.get('/api/v1/roles/4/documents')
       .set('Accept', 'application/json')
       .set({ Authorization: regularToken })
       .end((err, res) => {
-        expect(res.body.message).to.be
-        .equal('You require access to view this Doc or the ID does not exist');
-        expect(res.statusCode).to.be.equal(404);
+        expect(res.body.pagination.totalCount).to.be.equal(2);
+        expect(res.statusCode).to.be.equal(200);
         done();
       });
     });

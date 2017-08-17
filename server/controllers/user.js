@@ -1,7 +1,10 @@
 import bcrypt from 'bcrypt';
 import authentication from '../middleware/authentication';
-import helper from '../helpers/helper';
-import models from '../models/index';
+import { verifyUserParams, verifyIsInt, verifyLoginParams,
+  verifyUpdateUserParams } from '../helpers/validation';
+import { getAllUsers, getUserById, updateUser } from '../helpers/query';
+import { paginateResult } from '../helpers/pagination';
+import models from '../models';
 
 const User = models.User;
 
@@ -13,13 +16,13 @@ const User = models.User;
    * @return {object} object - information about the status of the request
    */
 const createUser = (request, response) => {
-  helper.verifyUserParams(request)
+  verifyUserParams(request)
   .then((result) => {
     const verifiedParams = result.mapped();
     const noErrors = result.isEmpty();
     if (!noErrors) {
       return response.status(412).json({
-        message: verifiedParams,
+        error: verifiedParams,
         more_info: 'https://dmsys.herokuapp.com/#creates-new-user',
       });
     }
@@ -42,9 +45,8 @@ const createUser = (request, response) => {
     })
     .catch((error) => {
       const data = {
-        message: `${email} already exist`,
-        token: null,
-        error: error.errors,
+        error: `${email} already exist`,
+        detailed_error: error.errors,
         more_info: 'https://dmsys.herokuapp.com/#creates-new-user',
       };
       return response.status(409).json(data);
@@ -60,13 +62,13 @@ const createUser = (request, response) => {
    * @return {object} object - information about the status of the request
    */
 const loginUser = (request, response) => {
-  helper.verifyLoginParams(request)
+  verifyLoginParams(request)
   .then((result) => {
     const verifiedParams = result.mapped();
     const noErrors = result.isEmpty();
     if (!noErrors) {
       return response.status(412).json({
-        message: verifiedParams,
+        error: verifiedParams,
         more_info: 'https://dmsys.herokuapp.com/#login-user',
       });
     }
@@ -82,7 +84,7 @@ const loginUser = (request, response) => {
       validUser = bcrypt.compareSync(plainTextpassword, user.password);
       if (validUser) {
         const userInfo = {
-          userId: user.id,
+          id: user.id,
           roleType: user.Role.roleName,
           email: user.email,
           roleId: user.roleId,
@@ -93,14 +95,13 @@ const loginUser = (request, response) => {
             token: userToken });
       }
       return response.status(401).json(
-        { message: 'Invalid email or password',
-          token: null,
+        { error: 'Invalid email or password',
           more_info: 'https://dmsys.herokuapp.com/#login-user',
         });
     })
     .catch(error => response.status(404).json(
-      { message: `${email} does not exist in the database`,
-        error,
+      { error: `${email} does not exist in the database`,
+        detailed_error: error,
         more_info: 'https://dmsys.herokuapp.com/#login-user',
       })
     );
@@ -116,15 +117,15 @@ const loginUser = (request, response) => {
    * @return {object} object - information about the status of the request
    */
 const allUser = (request, response) => {
-  const query = helper.queryForAllUsers(request);
+  const query = getAllUsers(request);
   User.findAndCountAll(query).then(users =>
   response.status(200).json(
-      helper.paginateResult(users, query, 'users')
+      paginateResult(users, query, 'users')
     )
   )
   .catch(error => response.status(500).json({
-    message: 'An unexpected error occured, try agian later',
-    error,
+    error: 'An unexpected error occured, try agian later',
+    detailed_error: error,
     more_info: 'https://dmsys.herokuapp.com/#find-matching-instances-of-user',
   })
   );
@@ -139,7 +140,7 @@ const allUser = (request, response) => {
    * @return {object} object - information about the status of the request
    */
 const findUser = (request, response) => {
-  helper.verifyIsInt(request)
+  verifyIsInt(request)
   .then((result) => {
     const verifiedParams = result.mapped();
     const noErrors = result.isEmpty();
@@ -149,7 +150,7 @@ const findUser = (request, response) => {
         more_info: 'https://dmsys.herokuapp.com/#find-user',
       });
     }
-    const query = helper.findUserById(request);
+    const query = getUserById(request);
     User.findAll(query)
     .then((user) => {
       if (user.length < 1) {
@@ -161,8 +162,8 @@ const findUser = (request, response) => {
       return response.status(200).json({ user });
     })
     .catch(error => response.status(500).json({
-      message: 'An unexpected error occurred',
-      error,
+      error: 'An unexpected error occurred',
+      detailed_error: error,
     }));
   });
 };
@@ -175,24 +176,23 @@ const findUser = (request, response) => {
    * @param {object} response response
    * @return {object} object - information about the status of the request
    */
-const updateUser = (request, response) => {
+const setUpdatedUser = (request, response) => {
   const userId = Number(request.params.id);
-  helper.verifyUpdateUserParams(request)
+  verifyUpdateUserParams(request)
   .then((result) => {
     const verifiedParams = result.mapped();
     const noErrors = result.isEmpty();
     if (!noErrors) {
       return response.status(412).json({
-        message: verifiedParams,
+        error: verifiedParams,
         more_info: 'https://dmsys.herokuapp.com/#update-user',
       });
     }
 
     const isAdmin = request.decoded.data.roleId === 1;
-
-    if (!isAdmin && userId !== request.decoded.data.userId) {
+    if (!isAdmin && userId !== request.decoded.data.id) {
       return response.status(401).json({
-        message: "Only an Admin can update another user's attributes",
+        error: "Only an Admin can update another user's attributes",
         more_info: 'https://dmsys.herokuapp.com/#update-user',
       });
     }
@@ -200,7 +200,7 @@ const updateUser = (request, response) => {
       delete request.body.roleId;
     }
     delete request.body.id;
-    const query = helper.queryUpdateUser(request);
+    const query = updateUser(request);
     User.update(request.body, query)
     .then((user) => {
       if (user[0] !== 0) {
@@ -209,12 +209,12 @@ const updateUser = (request, response) => {
         });
       }
       response.status(404).json({
-        message: 'UserId does not exist in the database',
+        error: 'UserId does not exist in the database',
       });
     })
     .catch(error => response.status(409).json({
-      message: 'Could not update user details',
-      error: error.parent.detail,
+      error: 'Could not update user details',
+      detailed_error: error.parent.detail,
       more_info: 'https://dmsys.herokuapp.com/#update-user',
     })
     );
@@ -244,18 +244,15 @@ const deleteUser = (request, response) => {
   .then((user) => {
     if (user === 0) {
       return response.status(404).json({
-        message: 'User ID does not exist',
-        user,
+        error: 'User ID does not exist',
         more_info: 'https://dmsys.herokuapp.com/#update-user',
       });
     }
-    return response.status(200).json({
-      message: 'User deleted successfully',
-      user });
+    return response.status(200).json({ message: 'User deleted successfully' });
   })
   .catch(error => response.status(500).json({
-    message: 'An unexpected error occurred',
-    error,
+    error: 'An unexpected error occurred',
+    detailed_error: error,
   }));
 };
 
@@ -264,6 +261,6 @@ module.exports = {
   loginUser,
   allUser,
   findUser,
-  updateUser,
+  setUpdatedUser,
   deleteUser,
 };

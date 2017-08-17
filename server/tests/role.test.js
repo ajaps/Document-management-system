@@ -1,8 +1,8 @@
 import chai from 'chai';
 import supertest from 'supertest';
-import authentication from '../server/middleware/authentication';
+import authentication from '../../server/middleware/authentication';
 import mockData from './mockData/mockData';
-import server from '../server';
+import server from '../../server';
 
 
 const expect = chai.expect;
@@ -19,7 +19,7 @@ describe('When user', () => {
       .set({ Authorization: regularToken })
       .end((err, res) => {
         expect(res.body).to.be.eql(mockData.availableRoles);
-        expect(res.body.message).to.be.equal('successful');
+        expect(res.body.message).to.be.equal('roles retrieved successfully');
         expect(res.statusCode).to.be.equal(200);
         done();
       });
@@ -36,7 +36,7 @@ describe('When user', () => {
       .end((err, res) => {
         expect(res.body.message).to.be.equal('new role created successfully');
         expect(res.body.role.roleName).to.be.equal('management');
-        expect(res.statusCode).to.be.equal(200);
+        expect(res.statusCode).to.be.equal(201);
         done();
       });
     });
@@ -48,7 +48,7 @@ describe('When user', () => {
       .set({ Authorization: adminToken })
       .send({ roleName: 1 })
       .end((err, res) => {
-        expect(res.body.message).to.be.equal('roleName must be a string');
+        expect(res.body.error).to.be.equal('roleName must be a string');
         expect(res.statusCode).to.be.equal(406);
         done();
       });
@@ -63,7 +63,7 @@ describe('When user', () => {
       .set({ Authorization: adminToken })
       .send({ roleName: 'management' })
       .end((err, res) => {
-        expect(res.body.error).to.be.equal('Validation error');
+        expect(res.body.detailed_error).to.be.equal('Validation error');
         expect(res.statusCode).to.be.equal(409);
         done();
       });
@@ -78,7 +78,7 @@ describe('When user', () => {
       .set({ Authorization: adminToken })
       .send({ roleName: 'student' })
       .end((err, res) => {
-        expect(res.body.message).to.be.equal('This action is forbidden');
+        expect(res.body.error).to.be.equal('This action is forbidden');
         expect(res.statusCode).to.be.equal(403);
         done();
       });
@@ -104,7 +104,7 @@ describe('When user', () => {
       .set({ Authorization: adminToken })
       .send({ roleName: 'management' })
       .end((err, res) => {
-        expect(res.body.message)
+        expect(res.body.error)
         .to.be.equal('An unexpected error occurred');
         expect(res.statusCode).to.be.equal(409);
         done();

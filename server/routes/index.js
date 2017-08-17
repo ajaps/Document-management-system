@@ -1,13 +1,15 @@
-import documentRoutes from './document';
-import roleRoutes from './role';
-import searchRoutes from './search';
-import userRoutes from './user';
+import DocRoutes from './document';
+import RoleRoutes from './role';
+import SearchRoutes from './search';
+import UserRoutes from './user';
+// import notFound from './notFound';
 
 const routes = (router) => {
-  userRoutes(router);
-  searchRoutes(router);
-  documentRoutes(router);
-  roleRoutes(router);
+  UserRoutes(router);
+  SearchRoutes(router);
+  DocRoutes(router);
+  RoleRoutes(router);
+  // notFound(router);
 };
 
 export default routes;

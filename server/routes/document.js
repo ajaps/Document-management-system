@@ -3,7 +3,7 @@ import { createDocument, getAllDocument, updateDocument, getDocumentByUserId,
     getDocumentByRole, deleteDocument,
     documentById } from '../controllers/documents';
 
-const Routes = (apiRoutes) => {
+const DocRoutes = (apiRoutes) => {
   apiRoutes
   .post('/documents', verifyToken, createDocument)
   .get('/documents', verifyToken, getAllDocument)
@@ -14,4 +14,4 @@ const Routes = (apiRoutes) => {
   .get('/roles/:id/documents', verifyToken, getDocumentByRole);
 };
 
-export default Routes;
+export default DocRoutes;
