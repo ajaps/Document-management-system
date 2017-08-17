@@ -22,7 +22,7 @@
 * The API Documentation can be found at [here](https://dmsys.herokuapp.com)
 
 ## Technology
-*  his project uses a host of modern technologies. The core ones are:
+*  This project uses a host of modern technologies. The core ones are:
    *  ECMAScript 6: Also known as ES2015, this is the newest version of Javascript with next-generation features like arrow functions, generators, enhanced object literals,spread operators and more. See [this link](https://en.wikipedia.org/wiki/ECMAScript) for details.
 
    *  NodeJS: NodeJS is a server-side JavaScript runtime engine built on Chrome's V8 JavaScript engine. It is lightweight, efficient and greatly used in building web apps. Please visit [this link](https://nodejs.org) for more details.

@@ -129,7 +129,7 @@ describe('When user', () => {
       .send({ content: 'In the beginning, God created heaven and earth' })
       .set({ Authorization: adminToken })
       .end((err, res) => {
-        expect(res.body.message).to.be.equal('updated successfully');
+        expect(res.body.message).to.be.equal('Documents updated successfully');
         expect(res.statusCode).to.be.equal(200);
         done();
       });

@@ -149,7 +149,9 @@ const getDocumentsByRole = (request) => {
 
 const deepSearch = (request) => {
   const searchQuery = [];
-  const splitString = (request.query.q).split(' ');
+  const filteredWords = (request.query.q).replace(/ +(?= )/g, '');
+  console.log(filteredWords);
+  const splitString = (filteredWords).split(' ');
   splitString.forEach((query) => {
     searchQuery.push({ $iLike: `%${query}%` });
   });

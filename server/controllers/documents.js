@@ -106,7 +106,7 @@ const updateDocument = (request, response) => {
     .then((document) => {
       if (document[0] !== 0) {
         return response.status(200).json({
-          message: 'updated successfully',
+          message: 'Documents updated successfully',
         });
       }
       Document.findAll({ where: { id: request.query.id } })
