@@ -9,7 +9,6 @@ const routes = (router) => {
   SearchRoutes(router);
   DocRoutes(router);
   RoleRoutes(router);
-  // notFound(router);
 };
 
 export default routes;
