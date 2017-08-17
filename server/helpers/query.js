@@ -114,30 +114,6 @@ const getDocByUserId = (request) => {
   };
 };
 
-const searchAllUsers = (request) => {
-  const getPaginate = paginate(request);
-  const isAdmin = request.decoded.data.roleId === 1;
-  if (isAdmin) {
-    return {
-      where: {
-        username: { $iLike: `%${request.query.q}%` },
-      },
-      order: [['roleId', 'ASC']],
-      offset: getPaginate[0],
-      limit: getPaginate[1],
-    };
-  }
-  return {
-    where: {
-      username: { $iLike: `%${request.query.q}%` },
-    },
-    attributes: ['id', 'username', 'roleId'],
-    order: [['roleId', 'ASC']],
-    offset: getPaginate[0],
-    limit: getPaginate[1],
-  };
-};
-
 const getUserById = (request) => {
   const userId = request.params.id;
   const isAdmin = request.decoded.data.roleId === 1;
@@ -171,17 +147,29 @@ const getDocumentsByRole = (request) => {
   };
 };
 
+const deepSearch = (request) => {
+  const searchQuery = [];
+  const splitString = (request.query.q).split(' ');
+  splitString.forEach((query) => {
+    searchQuery.push({ $iLike: `%${query}%` });
+  });
+  return searchQuery;
+};
 
 const searchDocuments = (request) => {
-  // const searchQuery = [];
-  // const splitString = (request.query.q).split(' ');
-  // splitString.forEach((query) => {
-  //   searchQuery.push({ iLike: `%${query}%` });
-  // });
+  const getPaginate = paginate(request);
+  const searchQuery = deepSearch(request);
   const isAdmin = request.decoded.data.roleId === 1;
   if (isAdmin) {
     return { order: [['createdAt', 'DESC']],
       attributes: { exclude: ['roleId'] },
+      where: {
+        title: {
+          $or: searchQuery
+        }
+      },
+      offset: getPaginate[0],
+      limit: getPaginate[1],
     };
   }
   return {
@@ -193,7 +181,41 @@ const searchDocuments = (request) => {
         { access: 'public' },
         { access: 'role', roleId: request.decoded.data.roleId },
       ],
+      title: {
+        $or: searchQuery
+      }
     },
+    offset: getPaginate[0],
+    limit: getPaginate[1],
+  };
+};
+
+const searchAllUsers = (request) => {
+  const searchQuery = deepSearch(request);
+  const getPaginate = paginate(request);
+  const isAdmin = request.decoded.data.roleId === 1;
+  if (isAdmin) {
+    return {
+      where: {
+        username: {
+          $or: searchQuery
+        }
+      },
+      order: [['roleId', 'ASC']],
+      offset: getPaginate[0],
+      limit: getPaginate[1],
+    };
+  }
+  return {
+    where: {
+      username: {
+        $or: searchQuery
+      }
+    },
+    attributes: ['id', 'username', 'roleId'],
+    order: [['roleId', 'ASC']],
+    offset: getPaginate[0],
+    limit: getPaginate[1],
   };
 };
 

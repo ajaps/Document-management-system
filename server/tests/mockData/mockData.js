@@ -62,7 +62,7 @@ const mockData = {
       updatedAt: '2017-08-17' }],
     pagination: { page: 1, pageCount: 1, pageSize: 10, totalCount: 3 } },
 
-  docNotFound: 'You require access to update this Doc or the ID does not exist',
+  docNotFound: 'the Document ID does not exist',
 
   usersInDatabase: [{ id: 1, username: 'framky', roleId: 1 },
     { id: 2, username: 'framky007', roleId: 2 },

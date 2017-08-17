@@ -1,4 +1,4 @@
-import { searchAllUsers, searchDocuments, testSearch } from '../helpers/query';
+import { searchAllUsers, searchDocuments } from '../helpers/query';
 import { paginateResult } from '../helpers/pagination';
 import models from '../models';
 
@@ -49,13 +49,8 @@ const searchDocument = (request, response) => {
         more_info: 'https://dmsys.herokuapp.com/#search-for-documents-based-on-title',
       });
     }
-    const setRegex = (request.query.q).replace(/ /g, '|');
-    const expression = RegExp(setRegex, 'gi');
-    const searchResult = (documents.rows).filter(document =>
-      expression.test(document.title)
-    );
     response.status(200).json(
-      searchResult
+        paginateResult(documents, query, 'documents')
       );
   })
   .catch(error => response.status(500).json({

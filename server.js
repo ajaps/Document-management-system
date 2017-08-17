@@ -23,8 +23,9 @@ const apiRoutes = express.Router();
 routes(apiRoutes);
 server.use('/api/v1', apiRoutes);
 
-apiRoutes.all('/', (req, res) => {
-  res.sendFile(path.resolve(__dirname, '../Documentation', 'index.html'));
+apiRoutes.all('*', (req, res) => {
+  res.send(`Congrats!! you finally did it, you entered a route
+    that hasnt been configured`);
 });
 
 server.listen(process.env.PORT || 3004, () => {});

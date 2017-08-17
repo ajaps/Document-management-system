@@ -109,9 +109,18 @@ const updateDocument = (request, response) => {
           message: 'updated successfully',
         });
       }
-      return response.status(404).json({
-        error: 'You require access to update this Doc or the ID does not exist',
-        more_info: 'https://dmsys.herokuapp.com/#update-document',
+      Document.findAll({ where: { id: request.query.id } })
+      .then((notfound) => {
+        if (notfound.length < 1) {
+          return response.status(404).json({
+            error: 'the Document ID does not exist',
+            more_info: 'https://dmsys.herokuapp.com/#update-document',
+          });
+        }
+        response.status(401).json({
+          error: 'You require access to update this Document',
+          more_info: 'https://dmsys.herokuapp.com/#update-document',
+        });
       });
     })
     .catch((error) => {
@@ -148,9 +157,18 @@ const documentById = (request, response) => {
           document
         });
       }
-      response.status(401).json({
-        error: 'You require access to view this Doc or the Doc ID does not exist',
-        more_info: 'https://dmsys.herokuapp.com/#get-documents-by-id',
+      Document.findAll({ where: { id: request.query.id } })
+      .then((notfound) => {
+        if (notfound.length < 1) {
+          return response.status(404).json({
+            error: 'the Document ID does not exist',
+            more_info: 'https://dmsys.herokuapp.com/#update-document',
+          });
+        }
+        response.status(401).json({
+          error: 'You require access to update this Document',
+          more_info: 'https://dmsys.herokuapp.com/#update-document',
+        });
       });
     })
     .catch(error => response.status(500).json({
@@ -184,9 +202,18 @@ const deleteDocument = (request, response) => {
           message: 'deleted successfully',
         });
       }
-      response.status(401).json({
-        error: 'You require access to delete this Doc or the ID does not exist',
-        more_info: 'https://dmsys.herokuapp.com/#delete-documents',
+      Document.findAll({ where: { id: request.query.id } })
+      .then((notfound) => {
+        if (notfound.length < 1) {
+          return response.status(404).json({
+            error: 'the Document ID does not exist',
+            more_info: 'https://dmsys.herokuapp.com/#update-document',
+          });
+        }
+        response.status(401).json({
+          error: 'You require access to update this Document',
+          more_info: 'https://dmsys.herokuapp.com/#update-document',
+        });
       });
     })
     .catch(error => response.status(500).json({
@@ -217,16 +244,24 @@ const getDocumentByUserId = (request, response) => {
     const query = getDocByUserId(request);
     Document.findAll(query)
     .then((documents) => {
-      if (documents.length < 1) {
-        return response.status(404).json({
-          error: `UserId does not exist or you do not have access
-            to view available document(s)`,
-          more_info: 'https://dmsys.herokuapp.com/#get-documents-by-userid',
+      if (documents.length > 0) {
+        return response.status(200).json({
+          message: 'retrieved successfully',
+          documents
         });
       }
-      response.status(200).json({
-        message: 'retrieved successfully',
-        documents
+      Document.findAll({ where: { id: request.query.id } })
+      .then((notfound) => {
+        if (notfound.length < 1) {
+          return response.status(404).json({
+            error: 'UserId does not exist',
+            more_info: 'https://dmsys.herokuapp.com/#update-document',
+          });
+        }
+        response.status(401).json({
+          error: 'you do not have access to view available document(s)',
+          more_info: 'https://dmsys.herokuapp.com/#update-document',
+        });
       });
     })
     .catch(error => response.status(500).json({
