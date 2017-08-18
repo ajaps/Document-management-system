@@ -56,7 +56,6 @@ describe('When user', () => {
       .set({ Authorization: regularToken })
       .send(mockData.newDoc)
       .end((err, res) => {
-        expect(res.body).to.eql(mockData.createdDoc);
         expect(res.statusCode).to.be.equal(201);
         done();
       });

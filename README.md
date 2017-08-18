@@ -68,7 +68,7 @@ If you are interested in contributing to development of DMSys, follow the instru
 - Create a pull request
 
 
-# FAQ
+# FAQs
 
 * Do I need to pay to use the APIs ?
 

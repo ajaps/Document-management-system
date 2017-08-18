@@ -18,7 +18,7 @@ describe('When user', () => {
       .set('Accept', 'application/json')
       .set({ Authorization: regularToken })
       .end((err, res) => {
-        expect(res.body).to.be.eql(mockData.availableRoles);
+        expect(res.body.pagination.totalCount).to.be.equal(4);
         expect(res.body.message).to.be.equal('roles retrieved successfully');
         expect(res.statusCode).to.be.equal(200);
         done();
