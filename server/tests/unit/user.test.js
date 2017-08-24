@@ -1,5 +1,5 @@
 import chai from 'chai';
-import models from '../../server/models';
+import models from '../../../server/models';
 import mockData from '../mockData/mockData';
 
 const expect = chai.expect;

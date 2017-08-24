@@ -1,8 +1,8 @@
 import chai from 'chai';
 import supertest from 'supertest';
-import authentication from '../server/middleware/authentication';
+import authentication from '../../server/middleware/authentication';
 import mockData from './mockData/mockData';
-import server from '../server';
+import server from '../../server';
 
 const expect = chai.expect;
 const request = supertest(server);
@@ -43,7 +43,8 @@ describe('When user', () => {
       .set('Accept', 'application/json')
       .set({ Authorization: regularToken })
       .end((err, res) => {
-        expect(res.body).to.be.eql(mockData.docSearchResult);
+        expect(res.body.pagination.totalCount).to.be.equal(3);
+        expect(res.body.documents[0].title).to.be.equal('Introduction to 101');
         expect(res.statusCode).to.be.equal(200);
         done();
       });

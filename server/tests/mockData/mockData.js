@@ -10,74 +10,14 @@ const mockData = {
     msg: '8 or more characters required',
     value: 'Food' },
 
-  availableRoles: { message: 'successful',
-    page: 1,
-    pageCount: 1,
-    pageSize: 10,
-    totalCount: 4,
-    roles:
-    [{ id: 1,
-      roleName: 'admin',
-      createdAt: '2017-08-14',
-      updatedAt: '2017-08-14' },
-    { id: 2,
-      roleName: 'regular',
-      createdAt: '2017-08-14',
-      updatedAt: '2017-08-14' },
-    { id: 3,
-      roleName: 'facilitator',
-      createdAt: '2017-08-14',
-      updatedAt: '2017-08-14' },
-    { id: 4,
-      roleName: 'fellow',
-      createdAt: '2017-08-14',
-      updatedAt: '2017-08-14' }
-    ]
-  },
-  userSearchResult: { message: 'successful',
-    page: 1,
-    pageCount: 1,
-    pageSize: 10,
-    totalCount: 3,
+  userSearchResult: { message: 'users retrieved successfully',
     users:
     [{ id: 1, username: 'framky', roleId: 1 },
      { id: 2, username: 'framky007', roleId: 2 },
-     { id: 3, username: 'frank', roleId: 3 }]
-  },
+     { id: 3, username: 'frank', roleId: 3 }],
+    pagination: { page: 1, pageCount: 1, pageSize: 10, totalCount: 3 } },
 
-  docSearchResult: { message: 'successful',
-    page: 1,
-    pageCount: 1,
-    pageSize: 10,
-    totalCount: 3,
-    documents:
-    [{ id: 1,
-      title: 'Introduction to 101',
-      content: 'The definition of computer is',
-      access: 'public',
-      userId: 1,
-      roleId: 1,
-      createdAt: '2017-08-14',
-      updatedAt: '2017-08-14' },
-    { id: 4,
-      title: 'Introduction to 104',
-      content: 'javascript keeps evolving to meet human wants and needs',
-      access: 'role',
-      userId: 4,
-      roleId: 2,
-      createdAt: '2017-08-14',
-      updatedAt: '2017-08-14' },
-    { id: 5,
-      title: 'Introduction to 105',
-      content: 'Did i do that? did i really do that?',
-      access: 'role',
-      userId: 2,
-      roleId: 2,
-      createdAt: '2017-08-14',
-      updatedAt: '2017-08-14' }]
-  },
-
-  docNotFound: 'You require access to update this Doc or the ID does not exist',
+  docNotFound: 'the Document ID does not exist',
 
   usersInDatabase: [{ id: 1, username: 'framky', roleId: 1 },
     { id: 2, username: 'framky007', roleId: 2 },
@@ -89,10 +29,10 @@ const mockData = {
 
   invalidToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiZnJhbWt5Q',
 
-  admin: { userId: 1, roleId: 1 },
-  regularUser: { userId: 2, roleId: 2 },
+  admin: { id: 1, roleId: 1 },
+  regularUser: { id: 2, roleId: 2 },
 
-  invalidTitle: { param: 'title', msg: '10 to 150 characters required' },
+  invalidTitle: { param: 'title', msg: '3 to 150 characters required' },
 
   shortTitle: { param: 'title',
     msg: '10 to 150 characters required',
@@ -104,10 +44,6 @@ const mockData = {
     content: 'This is the beginning of history class',
     access: 'public'
   },
-  createdDoc: { message: 'Document created',
-    title: 'history 211',
-    ownerId: 2,
-    Document_roleId: 2 },
 
   foundUser: { userID: 1, roleId: 1, email: 'ajaps@yahoo.com' },
   allDocuments: [
@@ -170,8 +106,8 @@ const mockData = {
     access: 'protected'
   },
 
-  invalidAccess: { message: 'An unexpected error occured',
-    error:
+  invalidAccess: { error: 'An unexpected error occured',
+    detailed_error:
     [{ message: 'Must be \'private\', \'public\' or \'role\' ',
       type: 'Validation error',
       path: 'access',
@@ -180,23 +116,14 @@ const mockData = {
     more_info: 'https://dmsys.herokuapp.com/#update-document' },
 
   invalidTitleLength: { param: 'title',
-    msg: '10 to 150 characters required',
-    value: 'Food' },
+    msg: '3 to 150 characters required',
+    value: 'Fo' },
 
   invalidId: {
     param: 'id',
     msg: 'ID must be a number',
     value: 'frank',
   },
-
-  invalidAccessResult: { message: 'An unexpected error occurred',
-    error:
-    [{ message: 'Must be \'private\', \'public\' or \'role\' ',
-      type: 'Validation error',
-      path: 'access',
-      value: 'protected',
-      __raw: {} }],
-    more_info: 'https://dmsys.herokuapp.com/#creates-new-documents' },
 
   publicDocument: {
     id: faker.random.number({ max: 100, min: 1 }),

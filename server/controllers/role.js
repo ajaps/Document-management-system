@@ -1,5 +1,7 @@
-import helper from '../helpers/helper';
-import models from '../models/index';
+import { verifyString, verifyIsInt } from '../helpers/validation';
+import { getRoles } from '../helpers/query';
+import { paginateResult } from '../helpers/pagination';
+import models from '../models';
 
 const Role = models.Role;
 
@@ -11,15 +13,16 @@ const Role = models.Role;
    * @return {object} object - information about the status of the request
    */
 const getAllRoles = (request, response) => {
-  const query = helper.queryForAllRoles(request);
+  const query = getRoles(request);
   Role.findAndCountAll(query)
   .then(roles => response.status(200).json(
-      helper.paginateResult(roles, query, 'roles')
+      paginateResult(roles, query, 'roles')
     )
   )
   .catch(error => response.status(500).json({
-    message: 'An unexpected error occurred',
-    error,
+    error: 'An unexpected error occurred',
+    detailed_error: error,
+    more_info: 'https://dmsys.herokuapp.com/#find-matching-instances-of-role',
   }));
 };
 
@@ -32,25 +35,25 @@ const getAllRoles = (request, response) => {
    * @return {object} object - information about the status of the request
    */
 const createRole = (request, response) => {
-  const isString = helper.verifyString(request.body.roleName);
+  const isString = verifyString(request.body.roleName);
   if (!isString) {
     return response.status(406).json({
-      message: 'roleName must be a string',
+      error: 'roleName must be a string',
       more_info: 'https://dmsys.herokuapp.com/#create-new-role',
     });
   }
   Role.create({
     roleName: request.body.roleName,
   })
-  .then(role => response.status(200).json({
+  .then(role => response.status(201).json({
     message: 'new role created successfully',
     role,
   })
   )
   .catch(error => response.status(409).json({
-    message: `Cannot create role with specified ID, ensure the roleName
+    error: `Cannot create role with specified ID, ensure the roleName
       doesn't already exist in the database`,
-    error: error.message,
+    detailed_error: error.message,
     roleName: (request.body.roleName).toLowerCase(),
     more_info: 'https://dmsys.herokuapp.com/#create-new-role',
   })
@@ -65,7 +68,7 @@ const createRole = (request, response) => {
    * @return {object} object - information about the status of the request
    */
 const updateRole = (request, response) => {
-  helper.verifyIsInt(request)
+  verifyIsInt(request)
   .then((result) => {
     const verifiedParams = result.mapped();
     const noErrors = result.isEmpty();
@@ -75,7 +78,7 @@ const updateRole = (request, response) => {
     const roleId = Number(request.params.id);
     if (roleId === request.decoded.data.roleId) {
       return response.status(403).json({
-        message: 'This action is forbidden',
+        error: 'This action is forbidden',
         more_info: 'https://dmsys.herokuapp.com/#update-role',
       });
     }
@@ -85,8 +88,8 @@ const updateRole = (request, response) => {
     })
     )
     .catch(error => response.status(409).json({
-      message: 'An unexpected error occurred',
-      error: error.errors,
+      error: 'An unexpected error occurred',
+      detailed_error: error.errors,
       more_info: 'https://dmsys.herokuapp.com/#update-role',
     })
     );
