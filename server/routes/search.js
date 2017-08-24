@@ -1,10 +1,10 @@
 import { verifyToken } from '../middleware/authentication';
 import { searchUser, searchDocument } from '../controllers/search';
 
-const Routes = (apiRoutes) => {
+const SearchRoutes = (apiRoutes) => {
   apiRoutes
   .get('/search/users', verifyToken, searchUser)
   .get('/search/documents', verifyToken, searchDocument);
 };
 
-export default Routes;
+export default SearchRoutes;

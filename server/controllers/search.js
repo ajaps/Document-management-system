@@ -1,5 +1,6 @@
-import helper from '../helpers/helper';
-import models from '../models/index';
+import { searchAllUsers, searchDocuments } from '../helpers/query';
+import { paginateResult } from '../helpers/pagination';
+import models from '../models';
 
 /**
    * Searches for users in the database
@@ -9,27 +10,23 @@ import models from '../models/index';
    * @return {object} object - information about the status of the request
    */
 const searchUser = (request, response) => {
-  const query = helper.queryForAllUsers(request);
-  models.User.findAndCountAll({ attributes: ['id', 'username', 'roleId'],
-    where: {
-      username: { $iLike: `%${request.query.q}%` },
-    },
-    order: [['roleId', 'ASC']],
-  }).then((users) => {
+  const query = searchAllUsers(request);
+  models.User.findAndCountAll(query)
+  .then((users) => {
     if (users.count < 1) {
       return response.status(404).json({
         message: 'No username matching the search term',
-        searchTerm: request.query.q,
+        searchTerm: request.query.q || "query term 'q' not set",
         more_info: 'https://dmsys.herokuapp.com/#search-for-users',
       });
     }
     response.status(200).json(
-      helper.paginateResult(users, query, 'users')
+      paginateResult(users, query, 'users')
     );
   })
   .catch(error => response.status(500).json({
-    message: 'An unexpected error occurred',
-    error,
+    error: 'An unexpected error occurred',
+    detailed_error: error,
   }));
 };
 
@@ -42,23 +39,23 @@ const searchUser = (request, response) => {
    * @return {object} object - information about the status of the request
    */
 const searchDocument = (request, response) => {
-  const query = helper.querySearchDocuments(request);
+  const query = searchDocuments(request);
   models.Document.findAndCountAll(query)
   .then((documents) => {
     if (documents.count < 1) {
       return response.status(404).json({
         message: 'No Document title matching the search term',
-        searchTerm: request.query.q,
+        searchTerm: request.query.q || "query term 'q' not set",
         more_info: 'https://dmsys.herokuapp.com/#search-for-documents-based-on-title',
       });
     }
     response.status(200).json(
-        helper.paginateResult(documents, query, 'documents')
+        paginateResult(documents, query, 'documents')
       );
   })
   .catch(error => response.status(500).json({
-    message: 'An unexpected error occurred',
-    error,
+    error: 'An unexpected error occurred',
+    detailed_error: error,
   }));
 };
 

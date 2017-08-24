@@ -1,8 +1,8 @@
 import chai from 'chai';
 import supertest from 'supertest';
-import authentication from '../server/middleware/authentication';
+import authentication from '../../server/middleware/authentication';
 import mockData from './mockData/mockData';
-import server from '../server';
+import server from '../../server';
 
 const expect = chai.expect;
 const request = supertest(server);
@@ -28,8 +28,7 @@ describe('When user', () => {
       request.post('/api/v1/users')
     .send({ email: 'johnDoe@yahoo.com', password: 'goodFood', username: 'joh' })
     .end((err, res) => {
-      expect(res.body.message).to.be.equal('johnDoe@yahoo.com already exist');
-      expect((res.body.token)).to.be.a('null');
+      expect(res.body.error).to.be.equal('johnDoe@yahoo.com already exist');
       expect(res.statusCode).to.be.equal(409);
       done();
     });
@@ -40,7 +39,7 @@ describe('When user', () => {
       request.post('/api/v1/users')
     .send({ email: 'johnDoe@yahoo', password: 'goodFood', username: 'joh' })
     .end((err, res) => {
-      expect(res.body.message.email).to.eql(mockData.invalidEmail);
+      expect(res.body.error.email).to.eql(mockData.invalidEmail);
       expect(res.statusCode).to.be.equal(412);
       done();
     });
@@ -52,7 +51,7 @@ describe('When user', () => {
       request.post('/api/v1/users')
     .send({ email: 'johnDoe@yahoo.com', password: 'Food', username: 'joh' })
     .end((err, res) => {
-      expect(res.body.message.password).to.eql(mockData.invalidPassword);
+      expect(res.body.error.password).to.eql(mockData.invalidPassword);
       expect(res.statusCode).to.be.equal(412);
       done();
     });
@@ -76,8 +75,7 @@ describe('When user', () => {
       request.post('/api/v1/users/login')
     .send({ email: 'johnDoe@yahoo.com', password: 'loveGoodFood' })
     .end((err, res) => {
-      expect(res.body.message).to.be.equal('Invalid email or password');
-      expect((res.body.token)).to.be.a('null');
+      expect(res.body.error).to.be.equal('Invalid email or password');
       expect(res.statusCode).to.be.equal(401);
       done();
     });
@@ -88,7 +86,7 @@ describe('When user', () => {
       request.post('/api/v1/users/login')
     .send({ email: 'frank@gmail.com', password: 'humanity' })
     .end((err, res) => {
-      expect(res.body.message).to.be.equal('frank@gmail.com does not exist in the database');
+      expect(res.body.error).to.be.equal('frank@gmail.com does not exist in the database');
       expect(res.statusCode).to.be.equal(404);
       done();
     });
@@ -101,12 +99,13 @@ describe('When user', () => {
     .set({ Authorization: regularToken })
     .set('Accept', 'application/json')
     .end((err, res) => {
-      expect(res.body.totalCount).to.be.equal(5);
+      expect(res.body.pagination.totalCount).to.be.equal(5);
       expect(res.body.users).to.eql(mockData.usersInDatabase);
       expect(res.statusCode).to.be.equal(200);
       done();
     });
     });
+
     it("should return 'Invalid token' and status 401 if an invalid token is used"
     , (done) => {
       request.get('/api/v1/users')
@@ -118,6 +117,7 @@ describe('When user', () => {
       done();
     });
     });
+
     it(`should return "A token is requeired for authentication" and status 428,
       when token isn't provided`, (done) => {
       request.get('/api/v1/users')
@@ -173,7 +173,7 @@ describe('When user', () => {
     .set('Accept', 'application/json')
     .send({ email: 'frank@gmail.com', password: 'humanity', roleId: 1 })
     .end((err, res) => {
-      expect(res.body.message).to.be
+      expect(res.body.error).to.be
       .equal("Only an Admin can update another user's attributes");
       expect(res.statusCode).to.be.equal(401);
       done();
@@ -225,7 +225,7 @@ describe('When user', () => {
     .set({ Authorization: adminToken })
     .set('Accept', 'application/json')
     .end((err, res) => {
-      expect(res.body.message).to.be
+      expect(res.body.error).to.be
       .equal('User ID does not exist');
       expect(res.statusCode).to.be.equal(404);
       done();
