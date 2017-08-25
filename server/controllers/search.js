@@ -40,6 +40,12 @@ const searchUser = (request, response) => {
    */
 const searchDocument = (request, response) => {
   const query = searchDocuments(request);
+  if (!request.query.q) {
+    return response.status(400).json({ error: 'No search term was specified',
+      more_info:
+        'https://dmsys.herokuapp.com/#search-for-documents-based-on-title'
+    });
+  }
   models.Document.findAndCountAll(query)
   .then((documents) => {
     if (documents.count < 1) {
