@@ -33,7 +33,7 @@ const createDocument = (request, response) => {
     })
     .then(document => response.status(201).json({
       message: 'document created',
-      Document: {
+      document: {
         title: document.title,
         access: document.access,
         ownerId: request.decoded.data.id,
