@@ -10,6 +10,11 @@ import models from '../models';
    * @return {object} object - information about the status of the request
    */
 const searchUser = (request, response) => {
+  if (!request.query.q) {
+    return response.status(400).json({ error: 'No search term was specified',
+      more_info: 'https://dmsys.herokuapp.com/#search-for-users'
+    });
+  }
   const query = searchAllUsers(request);
   models.User.findAndCountAll(query)
   .then((users) => {
@@ -39,13 +44,13 @@ const searchUser = (request, response) => {
    * @return {object} object - information about the status of the request
    */
 const searchDocument = (request, response) => {
-  const query = searchDocuments(request);
   if (!request.query.q) {
     return response.status(400).json({ error: 'No search term was specified',
       more_info:
         'https://dmsys.herokuapp.com/#search-for-documents-based-on-title'
     });
   }
+  const query = searchDocuments(request);
   models.Document.findAndCountAll(query)
   .then((documents) => {
     if (documents.count < 1) {
