@@ -13,7 +13,7 @@ describe('When user', () => {
   describe('signs up', () => {
     it('should return a JSON object containing message and a token', (done) => {
       request.post('/api/v1/users')
-    .send({ email: 'johnDoe@yahoo.com', password: 'humanity', username: 'john' })
+  .send({ email: 'johnDoe@yahoo.com', password: 'humanity', username: 'john' })
     .end((err, res) => {
       regularToken = res.body.token;
       expect(res.body.message).to.be.equal('New user created successfully');
@@ -86,7 +86,8 @@ describe('When user', () => {
       request.post('/api/v1/users/login')
     .send({ email: 'frank@gmail.com', password: 'humanity' })
     .end((err, res) => {
-      expect(res.body.error).to.be.equal('frank@gmail.com does not exist in the database');
+      expect(res.body.error)
+        .to.be.equal('frank@gmail.com does not exist in the database');
       expect(res.statusCode).to.be.equal(404);
       done();
     });
@@ -106,7 +107,7 @@ describe('When user', () => {
     });
     });
 
-    it("should return 'Invalid token' and status 401 if an invalid token is used"
+    it("should return 'Invalid token' and status 401 if token is invalid"
     , (done) => {
       request.get('/api/v1/users')
     .set({ Authorization: mockData.invalidToken })
@@ -167,7 +168,7 @@ describe('When user', () => {
 
   describe('update user attributes', () => {
     it(`should return a status code 404,
-      when user(not Admin) tries to update another users attributes`, (done) => {
+      when user(not Admin) tries to update another users attribute`, (done) => {
       request.put('/api/v1/users/3')
     .set({ Authorization: regularToken })
     .set('Accept', 'application/json')

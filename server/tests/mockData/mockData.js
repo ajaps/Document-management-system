@@ -103,7 +103,16 @@ const mockData = {
   invalidAccessType: {
     title: 'history 311',
     content: 'In 1970, before the war broke out; There were rumours',
-    access: 'protected'
+    access: 'protected',
+    userId: 1,
+    roleId: 1,
+  },
+
+  noTitle: {
+    content: 'In 1970, before the war broke out; There were rumours',
+    access: 'protected',
+    userId: 1,
+    roleId: 1,
   },
 
   invalidAccess: { error: 'An unexpected error occured',

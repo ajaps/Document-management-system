@@ -12,7 +12,7 @@ const regularToken = authentication.setUserToken(mockData.regularUser);
 
 describe('When user', () => {
   describe('creates new instance of document', () => {
-    it('should return a status code 412, when document has no title', (done) => {
+    it('should return status code 412, when document has no title', (done) => {
       request.post('/api/v1/documents')
     .set({ Authorization: regularToken })
     .set('Accept', 'application/json')
@@ -154,7 +154,8 @@ describe('When user', () => {
       .send({ title: 'Fo' })
       .set({ Authorization: adminToken })
       .end((err, res) => {
-        expect(res.body.detailed_error.title).to.be.eql(mockData.invalidTitleLength);
+        expect(res.body.detailed_error.title)
+          .to.be.eql(mockData.invalidTitleLength);
         expect(res.statusCode).to.be.equal(412);
         done();
       });

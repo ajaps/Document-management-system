@@ -46,7 +46,8 @@ const searchDocument = (request, response) => {
       return response.status(404).json({
         message: 'No Document title matching the search term',
         searchTerm: request.query.q || "query term 'q' not set",
-        more_info: 'https://dmsys.herokuapp.com/#search-for-documents-based-on-title',
+        more_info:
+          'https://dmsys.herokuapp.com/#search-for-documents-based-on-title',
       });
     }
     response.status(200).json(

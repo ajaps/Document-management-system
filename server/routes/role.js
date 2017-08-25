@@ -3,7 +3,7 @@ import { getAllRoles, createRole, updateRole } from '../controllers/role';
 
 const RoleRoutes = (apiRoutes) => {
   apiRoutes
-  .get('/roles', verifyToken, getAllRoles)
+  .get('/roles', verifyToken, adminPass, getAllRoles)
   .post('/roles', verifyToken, adminPass, createRole)
   .put('/roles/:id', verifyToken, adminPass, updateRole);
 };
