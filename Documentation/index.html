@@ -323,12 +323,12 @@ With a valid token a user can create/update/delete or search for documents, the 
 <blockquote>
 <p>Request</p>
 </blockquote>
-<pre class="highlight javascript tab-javascript"><code><span class="nx">body</span><span class="o">=</span><span class="p">{</span>
+<pre class="highlight javascript tab-javascript"><code><span class="nx">POST</span> <span class="o">/</span><span class="nx">users</span><span class="o">/</span>
+
+<span class="nx">body</span> <span class="o">=</span> <span class="p">{</span>
   <span class="na">email</span><span class="p">:</span> <span class="s1">'johndoe@email.com'</span><span class="p">,</span>
   <span class="na">password</span><span class="p">:</span> <span class="s1">'password'</span>
 <span class="p">}</span>
-
-<span class="nx">POST</span> <span class="o">/</span><span class="nx">users</span><span class="o">/</span>
 </code></pre>
 <blockquote>
 <p>Response.</p>
@@ -411,12 +411,12 @@ You must replace <code>token</code> with your personal token.
 <aside class="success">
 Remember — it requires no parameter and it retrieves all roles in the database!
 </aside>
-<h2 id='create-new-role'>Create new role</h2><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
-  </span><span class="err">roleName</span><span class="p">:</span><span class="w"> </span><span class="err">student</span><span class="w">
-</span><span class="p">}</span><span class="w">
+<h2 id='create-new-role'>Create new role</h2><pre class="highlight javascript tab-javascript"><code><span class="nx">POST</span> <span class="o">/</span><span class="nx">roles</span><span class="o">/</span>
 
-</span><span class="err">POST</span><span class="w"> </span><span class="err">/roles/</span><span class="w">
-</span></code></pre>
+<span class="nx">body</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s2">"roleName"</span><span class="p">:</span> <span class="s2">"student"</span>
+<span class="p">}</span>
+</code></pre>
 <blockquote>
 <p>The above command returns JSON structured like this:</p>
 </blockquote>
@@ -425,8 +425,8 @@ Remember — it requires no parameter and it retrieves all roles in the database
     </span><span class="s2">"role"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
         </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w">
         </span><span class="s2">"roleName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"student"</span><span class="p">,</span><span class="w">
-        </span><span class="s2">"updatedAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-08-02T21:39:35.106Z"</span><span class="p">,</span><span class="w">
-        </span><span class="s2">"createdAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-08-02T21:39:35.106Z"</span><span class="w">
+        </span><span class="s2">"updatedAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-08-02"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"createdAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-08-02"</span><span class="w">
     </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
@@ -463,11 +463,10 @@ Remember — Only an Admin can create roles!
 <blockquote>
 <p>Request</p>
 </blockquote>
-<pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
-  </span><span class="err">roleName</span><span class="p">:</span><span class="w"> </span><span class="err">'student</span><span class="p">,</span><span class="w">
+<pre class="highlight javascript tab-javascript"><code><span class="nx">PUT</span> <span class="o">/</span><span class="nx">roles</span><span class="o">/</span>
+</code></pre><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="s2">"roleName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"student"</span><span class="p">,</span><span class="w">
 </span><span class="p">}</span><span class="w">
-
-</span><span class="err">PUT</span><span class="w"> </span><span class="err">/roles/</span><span class="w">
 </span></code></pre>
 <blockquote>
 <p>The above command returns JSON structured like this:</p>
@@ -568,11 +567,13 @@ first roleID - Admin
 <aside class="success">
 Remember — The user must be authenticated, to view available users!
 </aside>
-<h2 id='creates-new-user'>Creates new user</h2><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
-  </span><span class="err">email</span><span class="p">:</span><span class="w"> </span><span class="err">johndoe@email</span><span class="p">,</span><span class="w">
-  </span><span class="err">password</span><span class="p">:</span><span class="w"> </span><span class="err">'password'</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
+<h2 id='creates-new-user'>Creates new user</h2><pre class="highlight javascript tab-javascript"><code><span class="nx">POST</span> <span class="o">/</span><span class="nx">api</span><span class="o">/</span><span class="nx">v1</span><span class="o">/</span><span class="nx">users</span>
+
+<span class="nx">body</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"johndoe@email"</span><span class="p">,</span>
+  <span class="s2">"password"</span><span class="p">:</span> <span class="s2">"password"</span>
+<span class="p">}</span>
+</code></pre>
 <blockquote>
 <p>The above command returns JSON structured like this:</p>
 </blockquote>
@@ -614,11 +615,12 @@ Remember — The user must be authenticated, to view available users!
 <aside class="success">
 Remember — The email must be valid and password length should be 8 or more!
 </aside>
-<h2 id='login-user'>Login user</h2><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
-  </span><span class="err">email</span><span class="p">:</span><span class="w"> </span><span class="err">johndoe@email</span><span class="p">,</span><span class="w">
-  </span><span class="err">password</span><span class="p">:</span><span class="w"> </span><span class="err">'password'</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
+<h2 id='login-user'>Login user</h2><pre class="highlight javascript tab-javascript"><code><span class="nx">POST</span> <span class="o">/</span><span class="nx">api</span><span class="o">/</span><span class="nx">v1</span><span class="o">/</span><span class="nx">users</span>
+<span class="nx">body</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"johndoe@email"</span><span class="p">,</span>
+  <span class="s2">"password"</span><span class="p">:</span> <span class="s2">"password"</span>
+<span class="p">}</span>
+</code></pre>
 <blockquote>
 <p>The above command returns JSON structured like this:</p>
 </blockquote>
@@ -699,10 +701,11 @@ Remember — The email must be valid and password length should be 8 or more!
 <aside class="success">
 Remember — The ID must be a number!
 </aside>
-<h2 id='update-user'>Update user</h2><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
-  </span><span class="err">email</span><span class="p">:</span><span class="w"> </span><span class="err">johndoe@email</span><span class="p">,</span><span class="w">
-  </span><span class="err">password</span><span class="p">:</span><span class="w"> </span><span class="err">'password'</span><span class="w">
-  </span><span class="err">roleId</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
+<h2 id='update-user'>Update user</h2><pre class="highlight javascript tab-javascript"><code><span class="nx">PUT</span> <span class="o">/</span><span class="nx">api</span><span class="o">/</span><span class="nx">v1</span><span class="o">/</span><span class="nx">users</span><span class="o">/&lt;</span><span class="nx">id</span><span class="o">&gt;</span>
+</code></pre><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="s2">"email"</span><span class="p">:</span><span class="w"> </span><span class="s2">"johndoe@email"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"password"</span><span class="p">:</span><span class="w"> </span><span class="s2">"password"</span><span class="w">
+  </span><span class="s2">"roleId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"4"</span><span class="p">,</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 <blockquote>
@@ -903,12 +906,14 @@ Remember — The query is executed on the user's email!
 <aside class="success">
 Remember — The user can only view documents he has access to (same role, public documents and documents created by the user!
 </aside>
-<h2 id='creates-new-documents'>Creates new documents</h2><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
-  </span><span class="err">title</span><span class="p">:</span><span class="w"> </span><span class="err">'The</span><span class="w"> </span><span class="err">Tortoise</span><span class="w"> </span><span class="err">stroy'</span><span class="p">,</span><span class="w">
-  </span><span class="err">content</span><span class="p">:</span><span class="w"> </span><span class="err">'Once</span><span class="w"> </span><span class="err">upon</span><span class="w"> </span><span class="err">a</span><span class="w"> </span><span class="err">time</span><span class="p">,</span><span class="w"> </span><span class="err">in</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="err">land</span><span class="w"> </span><span class="err">of</span><span class="w"> </span><span class="err">animals...'</span><span class="w">
-  </span><span class="err">access</span><span class="p">:</span><span class="w"> </span><span class="err">private</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
+<h2 id='creates-new-documents'>Creates new documents</h2><pre class="highlight javascript tab-javascript"><code><span class="nx">POST</span> <span class="o">/</span><span class="nx">api</span><span class="o">/</span><span class="nx">v1</span><span class="o">/</span><span class="nx">documents</span>
+
+<span class="nx">body</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"The Tortoise stroy"</span><span class="p">,</span>
+  <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"Once upon a time, in the land of animals..."</span><span class="p">,</span>
+  <span class="s2">"access"</span><span class="p">:</span> <span class="s2">"private"</span>
+<span class="p">}</span>
+</code></pre>
 <blockquote>
 <p>The above command returns JSON structured like this:</p>
 </blockquote>
@@ -959,9 +964,9 @@ Remember — access by default is set to - public!
  — The roleId of the document is set to the roleId of the user who created it!
 </aside>
 <h2 id='update-document'>Update document</h2><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
-  </span><span class="err">title</span><span class="p">:</span><span class="w"> </span><span class="err">'The</span><span class="w"> </span><span class="err">Tortoise</span><span class="w"> </span><span class="err">stroy'</span><span class="p">,</span><span class="w">
-  </span><span class="err">content</span><span class="p">:</span><span class="w"> </span><span class="err">'Once</span><span class="w"> </span><span class="err">upon</span><span class="w"> </span><span class="err">a</span><span class="w"> </span><span class="err">time</span><span class="p">,</span><span class="w"> </span><span class="err">in</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="err">land</span><span class="w"> </span><span class="err">of</span><span class="w"> </span><span class="err">animals...'</span><span class="w">
-  </span><span class="err">access</span><span class="p">:</span><span class="w"> </span><span class="err">private</span><span class="w">
+  </span><span class="s2">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The Tortoise stroy"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"content"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Once upon a time, in the land of animals..."</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"private"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 <blockquote>
@@ -1215,8 +1220,8 @@ Remember — An Admin can delete any document from the database while a user can
             </span><span class="s2">"content"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Who b this goat?"</span><span class="p">,</span><span class="w">
             </span><span class="s2">"access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"public"</span><span class="p">,</span><span class="w">
             </span><span class="s2">"userId"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
-            </span><span class="s2">"createdAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-08-01T05:56:48.686Z"</span><span class="p">,</span><span class="w">
-            </span><span class="s2">"updatedAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-08-01T05:56:48.686Z"</span><span class="w">
+            </span><span class="s2">"createdAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-08-01"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"updatedAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-08-01"</span><span class="w">
         </span><span class="p">},</span><span class="w">
         </span><span class="p">{</span><span class="w">
             </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
@@ -1224,8 +1229,8 @@ Remember — An Admin can delete any document from the database while a user can
             </span><span class="s2">"content"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Who b this tortoise?"</span><span class="p">,</span><span class="w">
             </span><span class="s2">"access"</span><span class="p">:</span><span class="w"> </span><span class="s2">"role"</span><span class="p">,</span><span class="w">
             </span><span class="s2">"userId"</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
-            </span><span class="s2">"createdAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-08-01T05:56:48.686Z"</span><span class="p">,</span><span class="w">
-            </span><span class="s2">"updatedAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-08-01T05:56:48.686Z"</span><span class="w">
+            </span><span class="s2">"createdAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-08-01"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"updatedAt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-08-01"</span><span class="w">
         </span><span class="p">}</span><span class="w">
     </span><span class="p">],</span><span class="w">
     </span><span class="s2">"pagination"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">

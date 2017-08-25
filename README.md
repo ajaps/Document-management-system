@@ -90,7 +90,7 @@ A ```Token``` is sent to client after successful signup and login.
 The Token must be set as authorization in the ```http request header``` in subsequent request(s) to access the protected routes
 
 ## Limitations
-The application uses a free plan of shared database (Elephantsql), which has a maximum size of 20mb and cannot process more than 5 concurrent connections at a time.
+The application uses a free plan of shared database, which has a maximum size of 20mb and cannot process more than 5 concurrent connections at a time.
 
 ## License
 This project is authored by [Ajaps Franklin]() and is licensed

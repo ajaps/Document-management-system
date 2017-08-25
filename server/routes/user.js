@@ -1,11 +1,11 @@
-import { verifyToken } from '../middleware/authentication';
+import { verifyToken, adminPass } from '../middleware/authentication';
 import { createUser, loginUser, allUser, findUser,
   setUpdatedUser, deleteUser } from '../controllers/user';
 
 const UserRoutes = (apiRoutes) => {
   apiRoutes
   .post('/users', createUser)
-  .get('/users', verifyToken, allUser)
+  .get('/users', verifyToken, adminPass, allUser)
   .get('/users/:id', verifyToken, findUser)
   .post('/users/login', loginUser)
   .put('/users/:id', verifyToken, setUpdatedUser)

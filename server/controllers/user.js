@@ -237,7 +237,7 @@ const deleteUser = (request, response) => {
   } else {
     return response.status(401).json({
       message: "Only an Admin can delete another user's record",
-      more_info: 'https://dmsys.herokuapp.com/#update-user',
+      more_info: 'https://dmsys.herokuapp.com/#delete-documents',
     });
   }
   User.destroy(query)
@@ -245,7 +245,7 @@ const deleteUser = (request, response) => {
     if (user === 0) {
       return response.status(404).json({
         error: 'User ID does not exist',
-        more_info: 'https://dmsys.herokuapp.com/#update-user',
+        more_info: 'https://dmsys.herokuapp.com/#delete-documents',
       });
     }
     return response.status(200).json({ message: 'User deleted successfully' });
