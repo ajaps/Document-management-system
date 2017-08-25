@@ -25,7 +25,7 @@ const mockData = {
     { id: 5, username: 'john', roleId: 2 },
     { id: 3, username: 'frank', roleId: 3 }],
 
-  noToken: { message: 'A token is requeired for authentication' },
+  noToken: { error: 'A token is requeired for authentication' },
 
   invalidToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiZnJhbWt5Q',
 

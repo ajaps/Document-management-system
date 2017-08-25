@@ -1,6 +1,6 @@
 import chai from 'chai';
-import models from '../../../server/models';
-import mockData from '../mockData/mockData';
+import models from '../../../../server/models';
+import mockData from '../../mockData/mockData';
 
 const expect = chai.expect;
 
@@ -16,8 +16,8 @@ describe('Users Model', () => {
         .then((newUser) => {
           expect(newUser).to.be.ok;
           expect(newUser.roleId).to.be.equal(2);
-          expect(user.username).to.have.lengthOf.above(0);
-          expect(user.email).to.have.string('@');
+          expect(newUser.username).to.have.lengthOf.above(0);
+          expect(newUser.email).to.have.string('@');
           done();
         });
     });

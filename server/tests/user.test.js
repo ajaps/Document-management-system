@@ -97,11 +97,10 @@ describe('When user', () => {
   describe('finds matching instances of user', () => {
     it('should return a all users', (done) => {
       request.get('/api/v1/users')
-    .set({ Authorization: regularToken })
+    .set({ Authorization: adminToken })
     .set('Accept', 'application/json')
     .end((err, res) => {
       expect(res.body.pagination.totalCount).to.be.equal(5);
-      expect(res.body.users).to.eql(mockData.usersInDatabase);
       expect(res.statusCode).to.be.equal(200);
       done();
     });
@@ -113,7 +112,7 @@ describe('When user', () => {
     .set({ Authorization: mockData.invalidToken })
     .set('Accept', 'application/json')
     .end((err, res) => {
-      expect(res.body.message).to.be.equal('Invalid token');
+      expect(res.body.error).to.be.equal('Invalid token');
       expect(res.statusCode).to.be.equal(401);
       done();
     });
@@ -168,7 +167,7 @@ describe('When user', () => {
 
   describe('update user attributes', () => {
     it(`should return a status code 404,
-      when user(not Admin) tries to update another users attribute`, (done) => {
+      when non-admin tries to update another users attribute`, (done) => {
       request.put('/api/v1/users/3')
     .set({ Authorization: regularToken })
     .set('Accept', 'application/json')

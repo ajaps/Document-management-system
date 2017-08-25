@@ -8,7 +8,6 @@ import server from '../../server';
 const expect = chai.expect;
 const request = supertest(server);
 const adminToken = authentication.setUserToken(mockData.admin);
-const regularToken = authentication.setUserToken(mockData.regularUser);
 
 describe('When user', () => {
   describe('get instances of role', () => {
@@ -16,7 +15,7 @@ describe('When user', () => {
       containing all users in the database`, (done) => {
       request.get('/api/v1/roles')
       .set('Accept', 'application/json')
-      .set({ Authorization: regularToken })
+      .set({ Authorization: adminToken })
       .end((err, res) => {
         expect(res.body.pagination.totalCount).to.be.equal(4);
         expect(res.body.message).to.be.equal('roles retrieved successfully');

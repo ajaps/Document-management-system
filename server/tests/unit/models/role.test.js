@@ -1,6 +1,6 @@
 import chai from 'chai';
-import models from '../../../server/models';
-import mockData from '../mockData/mockData';
+import models from '../../../../server/models';
+import mockData from '../../mockData/mockData';
 
 const expect = chai.expect;
 
@@ -14,8 +14,8 @@ describe('Roles Model', () => {
       Role.create(mockData.testRole)
         .then((newRole) => {
           expect(newRole).to.be.ok;
-          expect(role.roleName).to.be.ok;
-          expect(role.roleName).to.equal('visitor');
+          expect(newRole.roleName).to.be.ok;
+          expect(newRole.roleName).to.equal('visitor');
           done();
         });
     });
