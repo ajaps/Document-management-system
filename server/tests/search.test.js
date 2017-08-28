@@ -7,6 +7,7 @@ import server from '../../server';
 const expect = chai.expect;
 const request = supertest(server);
 const regularToken = authentication.setUserToken(mockData.regularUser);
+const adminToken = authentication.setUserToken(mockData.admin);
 
 describe('When user', () => {
   describe('searches for user', () => {
@@ -14,9 +15,9 @@ describe('When user', () => {
       list of users that matches the search term 'fr'`, (done) => {
       request.get('/api/v1/search/users/?q=fr')
       .set('Accept', 'application/json')
-      .set({ Authorization: regularToken })
+      .set({ Authorization: adminToken })
       .end((err, res) => {
-        expect(res.body).to.be.eql(mockData.userSearchResult);
+        expect(res.body.pagination.totalCount).to.be.equal(3);
         expect(res.statusCode).to.be.equal(200);
         done();
       });
@@ -26,7 +27,7 @@ describe('When user', () => {
       when the serach term does not match any user`, (done) => {
       request.get('/api/v1/search/users/?q=zrr')
       .set('Accept', 'application/json')
-      .set({ Authorization: regularToken })
+      .set({ Authorization: adminToken })
       .end((err, res) => {
         expect(res.body.message).to.be
           .equal('No username matching the search term');

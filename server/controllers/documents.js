@@ -32,7 +32,7 @@ const createDocument = (request, response) => {
       roleId: request.decoded.data.roleId,
     })
     .then(document => response.status(201).json({
-      message: 'document created',
+      message: 'Document created',
       document: {
         title: document.title,
         access: document.access,
