@@ -33,7 +33,7 @@ const createDocument = (request, response) => {
     })
     .then(document => response.status(201).json({
       message: 'Document created',
-      Document: {
+      document: {
         title: document.title,
         access: document.access,
         ownerId: request.decoded.data.id,
@@ -67,7 +67,8 @@ const getAllDocument = (request, response) => {
       return response.status(401).json({
         error: 'You dont have access to view available document(s)',
         documents,
-        more_info: 'https://dmsys.herokuapp.com/#creates-new-documents',
+        more_info:
+          'https://dmsys.herokuapp.com/#find-matching-instances-of-document',
       });
     }
     response.status(200).json(
@@ -162,12 +163,12 @@ const documentById = (request, response) => {
         if (notfound.length < 1) {
           return response.status(404).json({
             error: 'the Document ID does not exist',
-            more_info: 'https://dmsys.herokuapp.com/#update-document',
+            more_info: 'https://dmsys.herokuapp.com/#get-documents-by-id',
           });
         }
         response.status(401).json({
           error: 'You require access to update this Document',
-          more_info: 'https://dmsys.herokuapp.com/#update-document',
+          more_info: 'https://dmsys.herokuapp.com/#get-documents-by-id',
         });
       });
     })
@@ -207,12 +208,12 @@ const deleteDocument = (request, response) => {
         if (notfound.length < 1) {
           return response.status(404).json({
             error: 'the Document ID does not exist',
-            more_info: 'https://dmsys.herokuapp.com/#update-document',
+            more_info: 'https://dmsys.herokuapp.com/#delete-documents',
           });
         }
         response.status(401).json({
           error: 'You require access to update this Document',
-          more_info: 'https://dmsys.herokuapp.com/#update-document',
+          more_info: 'https://dmsys.herokuapp.com/#delete-documents',
         });
       });
     })
@@ -255,12 +256,12 @@ const getDocumentByUserId = (request, response) => {
         if (notfound.length < 1) {
           return response.status(404).json({
             error: 'UserId does not exist',
-            more_info: 'https://dmsys.herokuapp.com/#update-document',
+            more_info: 'https://dmsys.herokuapp.com/#get-documents-by-userid',
           });
         }
         response.status(401).json({
           error: 'you do not have access to view available document(s)',
-          more_info: 'https://dmsys.herokuapp.com/#update-document',
+          more_info: 'https://dmsys.herokuapp.com/#get-documents-by-userid',
         });
       });
     })

@@ -25,7 +25,7 @@ const mockData = {
     { id: 5, username: 'john', roleId: 2 },
     { id: 3, username: 'frank', roleId: 3 }],
 
-  noToken: { message: 'A token is requeired for authentication' },
+  noToken: { error: 'A token is requeired for authentication' },
 
   invalidToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiZnJhbWt5Q',
 
@@ -103,7 +103,16 @@ const mockData = {
   invalidAccessType: {
     title: 'history 311',
     content: 'In 1970, before the war broke out; There were rumours',
-    access: 'protected'
+    access: 'protected',
+    userId: 1,
+    roleId: 1,
+  },
+
+  noTitle: {
+    content: 'In 1970, before the war broke out; There were rumours',
+    access: 'protected',
+    userId: 1,
+    roleId: 1,
   },
 
   invalidAccess: { error: 'An unexpected error occured',

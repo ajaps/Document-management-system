@@ -19,14 +19,14 @@ const verifyToken = (request, response, next) => {
   if (token) {
     jwt.verify(token, SECRET_KEY, (error, decoded) => {
       if (error) {
-        return response.status(401).json({ message: 'Invalid token' });
+        return response.status(401).json({ error: 'Invalid token' });
       }
       request.decoded = decoded;
       next();
     });
   } else {
     response.status(428).json({
-      message: 'A token is requeired for authentication'
+      error: 'A token is requeired for authentication'
     });
   }
 };
@@ -35,7 +35,7 @@ const adminPass = (request, response, next) => {
   const isAdmin = request.decoded.data.roleId === 1;
   if (!isAdmin) {
     return response.status(401).json({
-      message: 'Admin priviledges is required to perform this action',
+      error: 'Admin priviledges is required to perform this action',
     });
   }
   next();

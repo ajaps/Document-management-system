@@ -147,7 +147,7 @@ const getDocumentsByRole = (request) => {
   };
 };
 
-const deepSearch = (request) => {
+const search = (request) => {
   const searchQuery = [];
   const filteredWords = (request.query.q).replace(/ +(?= )/g, '');
   const splitString = (filteredWords).split(' ');
@@ -159,7 +159,7 @@ const deepSearch = (request) => {
 
 const searchDocuments = (request) => {
   const getPaginate = paginate(request);
-  const searchQuery = deepSearch(request);
+  const searchQuery = search(request);
   const isAdmin = request.decoded.data.roleId === 1;
   if (isAdmin) {
     return { order: [['createdAt', 'DESC']],
@@ -192,7 +192,7 @@ const searchDocuments = (request) => {
 };
 
 const searchAllUsers = (request) => {
-  const searchQuery = deepSearch(request);
+  const searchQuery = search(request);
   const getPaginate = paginate(request);
   const isAdmin = request.decoded.data.roleId === 1;
   if (isAdmin) {
