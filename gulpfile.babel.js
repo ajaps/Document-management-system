@@ -11,7 +11,8 @@ import path from 'path';
 const plugins = loadPlugins();
 
 const sourcePaths = {
-  js: ['./**/*.js', '!dist/**', '!node_modules/**', '!coverage/**', '!Documentation/**']
+  js: ['./**/*.js', '!dist/**', '!node_modules/**', '!coverage/**',
+    '!Documentation/**']
 };
 
 // Compile all Babel Javascript into ES5 and place in dist folder
