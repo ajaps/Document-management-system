@@ -1,10 +1,11 @@
 // const Dotenv = require('dotenv-webpack');
-// const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const path = require('path');
 // const webpack = require('webpack');
 // const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
+  // entry: ["babel-polyfill", './client/app.js'],
   entry: './client/app.js',
   target: 'web',
   output: { path: path.join(__dirname, 'dist'), filename: 'bundle.js' },
@@ -27,13 +28,13 @@ module.exports = {
         test: /\.(png|woff|woff2|eot|ttf|svg|jpg)$/,
         loader: 'url-loader?limit=8192'
       },
-      // {
-      //   test: /\.scss$/,
-      //   use: ExtractTextPlugin.extract({
-      //     fallback: 'style-loader',
-      //     use: ['css-loader', 'sass-loader'],
-      //   }),
-      // },
+      {
+        test: /\.scss$/,
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: ['css-loader', 'sass-loader'],
+        }),
+      },
     ],
   },
   node: {
@@ -51,7 +52,7 @@ module.exports = {
     // }),
     // new webpack.optimize.OccurrenceOrderPlugin(),
     // new webpack.optimize.UglifyJsPlugin(),
-    // new ExtractTextPlugin('styles.css'),
+    new ExtractTextPlugin('main.css'),
     // new webpack.DefinePlugin({
     //   'process.env': {
     //     API_KEY: JSON.stringify(process.env.API_KEY),
