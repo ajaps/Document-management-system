@@ -1,3 +1,13 @@
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  /* Margin bottom by footer height */
+  padding-top: 3.5rem;
+  margin-bottom: 60px;
+  overflow: hidden;
+}
 .mainbox {
   margin-top: 50px;
 }
@@ -29,4 +39,146 @@ font-size:85%;
 }
 .signUp {
   margin-left:8px;
+}
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+  background-color: #f5f5f5;
+}
+.container {
+  width: auto;
+  max-width: 680px;
+  padding: 0 15px;
+}
+
+// Styling for profile button on header
+.round {
+    display: inline-block;
+    height: 30px;
+    width: 30px;
+    line-height: 30px;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+    background-color: #222;
+    color: #FFF;
+    text-align: center;
+}
+.round.hollow {
+    display: inline-block;
+    height: 30px;
+    width: 30px;
+    line-height: 30px;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+    background-color: #FFF;
+    color: #222;
+    text-align: center;
+    -webkit-box-shadow: 0px 0px 0px 3px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 0px 3px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 0px 3px rgba(0,0,0,0.75);
+}
+.round.hollow.blue {
+    color: #3EA6CE;
+    background-color: #FFF;
+    -webkit-box-shadow: 0px 0px 0px 3px #3EA6CE;
+    -moz-box-shadow: 0px 0px 0px 3px #3EA6CE;
+    box-shadow: 0px 0px 0px 3px #3EA6CE;
+}
+.eachDoc {
+  border: 1px solid blanchedalmond;
+  border-radius: 21px;
+}
+#editorPane{
+  margin-right: 8%;
+  overflow: scroll;
+  border: 2px solid cadetblue;
+  margin-bottom: 3%;
+}
+.searchbar{
+  max-height: 20%;
+}
+
+// .inputbox {
+//   width: 20% !important;
+// }
+
+/*
+ * Sidebar
+ */
+
+/* Hide for mobile, show later */
+// .sidebar {
+//   display: none;
+// }
+// @media (min-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 51px;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    display: block;
+    padding: 20px;
+    overflow-x: hidden;
+    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+    background-color: #f5f5f5;
+    border-right: 1px solid #eee;
+  }
+// }
+
+/* Sidebar navigation */
+.nav-sidebar {
+  margin-right: -21px; /* 20px padding + 1px border */
+  margin-bottom: 20px;
+  margin-left: -20px;
+}
+.nav-sidebar > li > a {
+  padding-right: 20px;
+  padding-left: 20px;
+}
+.nav-sidebar > .active > a,
+.nav-sidebar > .active > a:hover,
+.nav-sidebar > .active > a:focus {
+  color: #fff;
+  background-color: #428bca;
+}
+
+.documentsContainer{
+  max-height: 78vh;
+  min-height: 78vh;
+  overflow-y: scroll;
+}
+// .form-control{
+//   display: block;
+//   /* width: 100%; */
+//   height: 34px;
+//   padding: 6px 12px;
+//   font-size: 14px;
+//   line-height: 1.42857143;
+//   color: #555;
+//   background-color: #fff;
+//   background-image: none;
+//   border: 1px solid #ccc;
+//   border-radius: 4px;
+//   -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+//   box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+//   -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+//   -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+//   transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+// }
+
+.accessType {
+  padding-bottom: 4%;
+}
+#title{
+  margin-bottom: 1%;
+}
+.createDoc {
+  margin-top: 2.4%;
+}
+.logoutBtn{
+  margin-top: 9%;
 }

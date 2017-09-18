@@ -1,4 +1,4 @@
-import { login, register } from '../api/docManagement';
+import { login, register, newDoc } from '../api/docManagement';
 
 const userLoginSuccess = loginToken => (
   { type: "USER_LOGIN", loginToken }

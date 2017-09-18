@@ -2,8 +2,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
+import { browserHistory } from 'react-router';
 
-import * as userAction from '../actions/userAction';
+import * as userActions from '../actions/userActions';
 
 class Login extends React.Component {
   constructor(props, context) {
@@ -16,14 +17,17 @@ class Login extends React.Component {
     this.textChanged = this.textChanged.bind(this);
   }
 
-  /* componentWillMount() {
-    if (window.localStorage.docToken) {
-      <Redirect to={{ pathname: '/layout',
-        state: { from: this.props.location } }}
-          />;
+  componentWillMount() {
+    if (window.localStorage.userToken) {
+      this.props.history.push('/dashboard');
     }
-    // this.props.location.pathname);
-  } */
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.userToken) {
+      this.props.history.push('/dashboard');
+    }
+  }
 
   textChanged(event) {
     if (event.target.name === 'email') {
@@ -98,6 +102,7 @@ class Login extends React.Component {
 Login.propTypes = {
   actions: PropTypes.object,
   userToken: PropTypes.string,
+  history: PropTypes.object,
 };
 
 
@@ -109,7 +114,7 @@ const mapStateToProps = (state, ownProps) => (
 
 const mapDispatchToProps = dispatch => (
   {
-    actions: bindActionCreators(userAction, dispatch),
+    actions: bindActionCreators(userActions, dispatch),
   }
 );
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

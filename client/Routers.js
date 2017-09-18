@@ -4,27 +4,18 @@ import React from 'react';
 import Footer from './Footer.jsx';
 import Header from './Header.jsx';
 import Login from './presentational/Login.jsx';
-import Layout from './Layout';
+import Dashboard from './Dashboard';
 import Register from './presentational/Register.jsx';
 import PublicRoute from './container/PublicRoute';
 import PrivateRoute from './container/PrivateRoute';
 
-const Routers = () => (
+const Routers = props => (
   <Router>
-    <div>
-      <Header />
-      <ul>
-        <li><Link to="/">Home</Link></li>
-        <li><Link to="/about">About</Link></li>
-        <li><Link to="/topics">Topics</Link></li>
-        <li><Link to="/login">Login</Link></li>
-        <li><Link to="/layout">Layout</Link></li>
-        <li><Link to="/register">Register</Link></li>
-      </ul>
-
+    <div className="container-fluid">
+      <Header props={props}/>
       <hr/>
 
-      {/* <PublicRoute exact path="/"
+       {/*<PublicRoute exact path="/"
         authenticated={window.localStorage.docToken}
         component={Header}
       />
@@ -38,15 +29,15 @@ const Routers = () => (
         authenticated={window.localStorage.docToken}
         component={Register}
       />
-      <PrivateRoute path="/layout"
+      <PrivateRoute path="/dashboard"
         authenticated={window.localStorage.docToken}
-        component={Layout}
-      /> */}
-      <Route exact path="/goal" component={Header}/>
-      <Route path="/about" component={Layout}/>
+        component={Dashboard}
+      />*/}
+      <Route exact path="/" component={Login}/>
+      <Route path="/about" component={Dashboard}/>
       <Route path="/topics" component={Footer}/>
       <Route path="/login" component={Login}/>
-      <Route path="/layout" component={Layout}/>
+      <Route path="/dashboard" component={Dashboard}/>
       <Route path="/register" component={Register}/>
 
       <Footer />

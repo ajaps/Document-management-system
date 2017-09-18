@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 
-import * as userAction from '../actions/userAction';
+import * as userAction from '../actions/userActions';
 
 
 class Register extends React.Component {
@@ -16,6 +16,18 @@ class Register extends React.Component {
     };
     this.textChanged = this.textChanged.bind(this);
     this.registerBtn = this.registerBtn.bind(this);
+  }
+
+  componentWillMount() {
+    if (window.localStorage.userToken) {
+      this.props.history.push('/dashboard');
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.userToken) {
+      this.props.history.push('/dashboard');
+    }
   }
 
   registerBtn(event) {
@@ -38,7 +50,9 @@ class Register extends React.Component {
   }
 
   render() {
-    console.log(this.props);
+    if (this.props.userToken.length > 5) {
+      localStorage.setItem('userToken', this.props.userToken);
+    }
     return (
       <div className="container">
       <div id="signinlink"
@@ -100,6 +114,7 @@ class Register extends React.Component {
 Register.propTypes = {
   actions: PropTypes.object,
   userToken: PropTypes.string,
+  history: PropTypes.object,
 };
 
 const mapStateToProps = (state, ownProps) => (
